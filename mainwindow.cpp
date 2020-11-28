@@ -14,11 +14,11 @@ MainWindow::MainWindow(QWidget *parent)
     setPrevIcon();
     setNextIcon();
     setPauseIcon();
+    setMuteIcon();
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;\
+MainWindow::~MainWindow() {
+    delete ui;
 }
 
 
@@ -40,4 +40,9 @@ void MainWindow::setPauseIcon() {
     ui->btnPause->setFlat(true);
 }
 
+void MainWindow::setMuteIcon() {
+    QIcon muteIcon = QIcon(root + "/images/mute.jpg");
+    ui->btnMute->setIcon(muteIcon);
+    ui->btnMute->setFlat(true);
 
+}

@@ -21,6 +21,7 @@ private:
     void setPrevIcon();         //设置下一首的图标样式
     void setNextIcon();
     void setPauseIcon();
+    void setMuteIcon();
     QString root;
 };
 #endif // MAINWINDOW_H
