@@ -15,7 +15,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
 private:
     Ui::MainWindow *ui;
+    void setPrevIcon();         //设置下一首的图标样式
+    void setNextIcon();
+    void setPauseIcon();
+    QString root;
 };
 #endif // MAINWINDOW_H
