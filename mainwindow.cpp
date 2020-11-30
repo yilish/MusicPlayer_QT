@@ -5,20 +5,26 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    setMaximumSize(1300, 800);
-    setMinimumSize(1300, 800);
-//    setWindowFlags(Qt::FramelessWindowHint|windowFlags());  //实现无边框
-    //ui->btnPrevSong->setIcon(QIcon(QPixmap("D:/DSproj/MusicPlayer/images/IconPrevSong.ico")));
-    root = "D:/DSproj/MusicPlayer";         //此处记得更改本地根目录
     //ui->setupUi(this);
+    setMaximumSize(1300,800);
+    setMinimumSize(1300,800);//固定软件界面的大小
+    //setWindowFlags(Qt::FramelessWindowHint|windowFlags());//实现无边框
     m_downWidget = new QWidget(this);
     setDownWidget(m_downWidget);
-    m_downPlayWidget = new down_playWidget(m_downWidget);
+    m_downPlayWidget = new Down_PlayWidget(m_downWidget);
     m_downPlayWidget->setGeometry(0,0,250,70);
-//    setPrevIcon();
-//    setNextIcon();
-//    setPauseIcon();
-//    setMuteIcon();
+    m_mediaPlayer = new QMediaPlayer(this);
+
+    //init of play list
+    m_mediaPlayList = new QMediaPlaylist(this);
+    m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
+    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/MusicPlayer/music/test.mp3"));
+    m_mediaPlayList->setCurrentIndex(0);
+
+    //bind list with player
+    m_mediaPlayer->setPlaylist(m_mediaPlayList);
+    m_mediaPlayer->setVolume(30);
+    m_mediaPlayer->play();
 }
 
 MainWindow::~MainWindow() {
@@ -36,28 +42,3 @@ void MainWindow::setDownWidget(QWidget *widget) {
 }
 
 
-
-//void MainWindow::setPrevIcon() {
-//    QIcon prevIcon = QIcon(root + "/images/IconPrevSong.ico");
-//    ui->btnPrevSong->setIcon(prevIcon);
-//    ui->btnPrevSong->setFlat(true);
-//}
-
-//void MainWindow::setNextIcon() {
-//    QIcon nextIcon = QIcon(root + "/images/IconNextSong.jpg");
-//    ui->btnNextSong->setIcon(nextIcon);
-//    ui->btnNextSong->setFlat(true);
-//}
-
-//void MainWindow::setPauseIcon() {
-//    QIcon pauseIcon = QIcon(root + "/images/pause.jpg");
-//    ui->btnPause->setIcon(pauseIcon);
-//    ui->btnPause->setFlat(true);
-//}
-
-//void MainWindow::setMuteIcon() {
-//    QIcon muteIcon = QIcon(root + "/images/mute.jpg");
-//    ui->btnMute->setIcon(muteIcon);
-//    ui->btnMute->setFlat(true);
-
-//}
