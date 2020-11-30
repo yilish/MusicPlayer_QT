@@ -16,10 +16,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    down_playwidget.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    down_playwidget.h \
     mainwindow.h
 
 FORMS += \
@@ -29,3 +31,23 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    images/IconNextSong.ico \
+    images/IconNextSong.jpg \
+    images/IconPrevSong.ico \
+    images/IconPrevSong.jpg \
+    images/before.png \
+    images/before_normal.png \
+    images/before_pressed.png \
+    images/mute.jpg \
+    images/next.png \
+    images/next_normal.png \
+    images/next_pressed.png \
+    images/pause.jpg \
+    images/pause.png \
+    images/play.png \
+    images/play_pressed.png
+
+RESOURCES += \
+    resources.qrc
