@@ -1,2 +1,19 @@
-<!DOCTYPE RCC>
-<RCC version="1.0"/>
+<RCC>
+    <qresource prefix="/images">
+        <file>images/before.png</file>
+        <file>images/before_normal.png</file>
+        <file>images/before_pressed.png</file>
+        <file>images/IconNextSong.ico</file>
+        <file>images/IconNextSong.jpg</file>
+        <file>images/IconPrevSong.ico</file>
+        <file>images/IconPrevSong.jpg</file>
+        <file>images/mute.jpg</file>
+        <file>images/next.png</file>
+        <file>images/next_normal.png</file>
+        <file>images/next_pressed.png</file>
+        <file>images/pause.jpg</file>
+        <file>images/pause.png</file>
+        <file>images/play.png</file>
+        <file>images/play_pressed.png</file>
+    </qresource>
+</RCC>
