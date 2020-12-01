@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_mediaPlayList = new QMediaPlaylist(this);
     m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
     m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
+    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
+   // m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test2.mp3"));
     m_mediaPlayList->setCurrentIndex(0);
 
     //bind list with player
@@ -37,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     //连接信号与槽
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
+    connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
+    connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
 }
 
 MainWindow::~MainWindow() {
@@ -55,6 +59,18 @@ void MainWindow::updateMusicWidget() {
         m_mediaPlayer->pause();
     }
 
+}
+
+void MainWindow::playNextSong() {
+    auto nextIndex = (m_mediaPlayList->currentIndex() + 1) % m_mediaPlayList->mediaCount();
+    // calculate the index of next song by mod the max size of total media.
+    m_mediaPlayList->setCurrentIndex(nextIndex);
+
+}
+
+void MainWindow::playPrevSong() {
+    auto nextIndex = (m_mediaPlayList->currentIndex() - 1) % m_mediaPlayList->mediaCount();
+    m_mediaPlayList->setCurrentIndex(nextIndex);
 }
 
 void MainWindow::setDownWidget(QWidget *widget) {

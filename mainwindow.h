@@ -20,6 +20,8 @@ public:
 
 private slots:
     void updateMusicWidget();
+    void playNextSong();
+    void playPrevSong();
 private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
