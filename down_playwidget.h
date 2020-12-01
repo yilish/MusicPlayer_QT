@@ -19,7 +19,7 @@ public:
     QPushButton* m_btnPrevSong;
     QPushButton* m_btnNextSong;
     QMediaPlayer* m_mediaPlayer;
-    QLayout* m_horizonalLayout;
+    //QLayout* m_horizonalLayout;
 };
 
 #endif // DOWN_PLAYWIDGET_H

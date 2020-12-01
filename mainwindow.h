@@ -5,6 +5,8 @@
 #include <QtMultimedia>
 #include <QtMultimedia/QMediaPlayer>
 #include "down_playwidget.h"
+#include "down_voicewidget.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -22,13 +24,14 @@ private slots:
     void updateMusicWidget();
     void playNextSong();
     void playPrevSong();
+    void mute();
 private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
     QMediaPlayer* m_mediaPlayer;
     QMediaPlaylist* m_mediaPlayList;
     Down_PlayWidget* m_downPlayWidget;
-
+    Down_VoiceWidget* m_downVoiceWidget;
     void setDownWidget(QWidget* widget);
 
 };

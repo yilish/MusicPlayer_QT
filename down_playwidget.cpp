@@ -31,10 +31,6 @@ Down_PlayWidget::Down_PlayWidget(QWidget *parent) :QWidget(parent) {
     m_btnNextSong->setStyleSheet("QPushButton{border-image:url(:/images/images/next_normal.png)}\
                                   QPushButton:hover{border-image:url(:/images/images/next_pressed.png)}");
 
-    m_horizonalLayout = new QHBoxLayout();
-    m_horizonalLayout->addWidget(m_btnPrevSong);
-    m_horizonalLayout->addWidget(m_btnPlay);
-    m_horizonalLayout->addWidget(m_btnNextSong);
 
 }
 

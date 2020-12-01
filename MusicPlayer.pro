@@ -18,12 +18,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     down_playprogressbar.cpp \
     down_playwidget.cpp \
+    down_voicewidget.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     down_playprogressbar.h \
     down_playwidget.h \
+    down_voicewidget.h \
     mainwindow.h
 
 FORMS += \

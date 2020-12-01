@@ -13,12 +13,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //边框初始化
+    //下边框初始化
     m_downWidget = new QWidget(this);
     setDownWidget(m_downWidget);
     m_downPlayWidget = new Down_PlayWidget(m_downWidget);
     m_downPlayWidget->setGeometry(0,0,250,70);
 
 
+    m_downVoiceWidget = new Down_VoiceWidget(m_downWidget);
+    m_downVoiceWidget->setGeometry(940, 0, 180, 70);
     //播放器初始化
     m_mediaPlayer = new QMediaPlayer(this);
     m_downPlayWidget->setMediaPlayer(m_mediaPlayer);
@@ -41,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
+    connect(m_downVoiceWidget->m_btnMute, SIGNAL(clicked(bool)), this, SLOT(mute()));
 }
 
 MainWindow::~MainWindow() {
@@ -71,6 +75,16 @@ void MainWindow::playNextSong() {
 void MainWindow::playPrevSong() {
     auto nextIndex = (m_mediaPlayList->currentIndex() - 1) % m_mediaPlayList->mediaCount();
     m_mediaPlayList->setCurrentIndex(nextIndex);
+}
+
+void MainWindow::mute() {
+    if (! m_downVoiceWidget->m_btnMute->isChecked()) {
+        m_mediaPlayer->setVolume(30);//设置default音量
+    }
+    else {
+        m_mediaPlayer->setVolume(0);
+    }
+
 }
 
 void MainWindow::setDownWidget(QWidget *widget) {
