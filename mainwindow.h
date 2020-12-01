@@ -17,7 +17,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
 private slots:
+    void updateMusicWidget();
 private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
