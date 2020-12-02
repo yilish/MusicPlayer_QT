@@ -1,0 +1,19 @@
+MySlider::groove:horizonal {
+    position:absolute;
+    height:10px;
+
+}
+
+MySlider::handle:horizonal {
+    image:url(:/images/images/redDot.png);
+    border-radius: 4px;
+}
+
+MySlider::handle:horizonal:hover {
+    image:url(:/images/images/redDot.png);
+    border-radius: 8px;
+}
+
+MySlider::sub-page:horizonal {
+    background: #E94B4B;
+}

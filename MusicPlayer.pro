@@ -20,13 +20,17 @@ SOURCES += \
     down_playwidget.cpp \
     down_voicewidget.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    myslider.cpp \
+    qssparser.cpp
 
 HEADERS += \
     down_playprogressbar.h \
     down_playwidget.h \
     down_voicewidget.h \
-    mainwindow.h
+    mainwindow.h \
+    myslider.h \
+    qssparser.h
 
 FORMS += \
     mainwindow.ui

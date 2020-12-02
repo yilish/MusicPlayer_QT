@@ -38,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
     //bind list with player
     m_mediaPlayer->setPlaylist(m_mediaPlayList);
     m_mediaPlayer->setVolume(30);
+
+
+
     //m_mediaPlayer->play();
 
     //连接信号与槽

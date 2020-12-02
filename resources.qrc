@@ -69,6 +69,9 @@
         <file>images/wangyiyunicon .png</file>
         <file>images/xin_normal.png</file>
         <file>images/xin_pressed.png</file>
+        <file>images/redDot.png</file>
     </qresource>
-    <qresource prefix="/music"/>
+    <qresource prefix="/qss">
+        <file>sliderVolStyle.qss</file>
+    </qresource>
 </RCC>
