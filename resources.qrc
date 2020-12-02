@@ -15,5 +15,60 @@
         <file>images/pause.png</file>
         <file>images/play.png</file>
         <file>images/play_pressed.png</file>
+        <file>images/0-1.jpg</file>
+        <file>images/0-2.jpg</file>
+        <file>images/0-3.jpg</file>
+        <file>images/add.png</file>
+        <file>images/background.png</file>
+        <file>images/berfor.png</file>
+        <file>images/biger.png</file>
+        <file>images/changegan.png</file>
+        <file>images/close_normal.png</file>
+        <file>images/close_pressed.png</file>
+        <file>images/comboxitem1.png</file>
+        <file>images/comboxitem2.png</file>
+        <file>images/comboxitem3.png</file>
+        <file>images/delete.png</file>
+        <file>images/do_flase.png</file>
+        <file>images/do_true.png</file>
+        <file>images/findMusic.png</file>
+        <file>images/fmLabel.png</file>
+        <file>images/friendlabel.png</file>
+        <file>images/heijiaopian.png</file>
+        <file>images/less.png</file>
+        <file>images/list_normal.png</file>
+        <file>images/list_pressed.png</file>
+        <file>images/max_normal .png</file>
+        <file>images/max_normal.png</file>
+        <file>images/max_press.png</file>
+        <file>images/max_pressed.png</file>
+        <file>images/min_normal.png</file>
+        <file>images/min_pressed.png</file>
+        <file>images/mini_normal.png</file>
+        <file>images/mini_pressed.png</file>
+        <file>images/mmmmm.jpg</file>
+        <file>images/morebiger.png</file>
+        <file>images/music.png</file>
+        <file>images/music_word.png</file>
+        <file>images/music3.png</file>
+        <file>images/mvlabel.png</file>
+        <file>images/redLine.jpg</file>
+        <file>images/search_normal.png</file>
+        <file>images/search_press.png</file>
+        <file>images/seting_normal.png</file>
+        <file>images/seting_pressed.png</file>
+        <file>images/skin_normal.png</file>
+        <file>images/skin_pressed.png</file>
+        <file>images/stop.png</file>
+        <file>images/undo_flase.png</file>
+        <file>images/undo_true.png</file>
+        <file>images/voice_clicked.png</file>
+        <file>images/voice_unclicked.png</file>
+        <file>images/wangyi.ico</file>
+        <file>images/wangyimini.png</file>
+        <file>images/wangyiyunicon .png</file>
+        <file>images/xin_normal.png</file>
+        <file>images/xin_pressed.png</file>
     </qresource>
+    <qresource prefix="/music"/>
 </RCC>

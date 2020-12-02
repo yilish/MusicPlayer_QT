@@ -1,5 +1,5 @@
 QT       += core gui
-
+QT       += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -16,12 +16,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    down_playprogressbar.cpp \
     down_playwidget.cpp \
+    down_voicewidget.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    down_playprogressbar.h \
     down_playwidget.h \
+    down_voicewidget.h \
     mainwindow.h
 
 FORMS += \
@@ -47,7 +51,8 @@ DISTFILES += \
     images/pause.jpg \
     images/pause.png \
     images/play.png \
-    images/play_pressed.png
+    images/play_pressed.png \
+
 
 RESOURCES += \
     resources.qrc

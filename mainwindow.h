@@ -2,7 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtMultimedia>
+#include <QtMultimedia/QMediaPlayer>
 #include "down_playwidget.h"
+#include "down_voicewidget.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -15,16 +19,20 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
 private slots:
+    void updateMusicWidget();
+    void playNextSong();
+    void playPrevSong();
+    void mute();
 private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
-    down_playWidget* m_downPlayWidget;
-//    void setPrevIcon();         //设置下一首的图标样式
-//    void setNextIcon();
-//    void setPauseIcon();
-//    void setMuteIcon();
+    QMediaPlayer* m_mediaPlayer;
+    QMediaPlaylist* m_mediaPlayList;
+    Down_PlayWidget* m_downPlayWidget;
+    Down_VoiceWidget* m_downVoiceWidget;
     void setDownWidget(QWidget* widget);
-    QString root;
+
 };
 #endif // MAINWINDOW_H
