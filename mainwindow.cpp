@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     //bind list with player
     m_mediaPlayer->setPlaylist(m_mediaPlayList);
     m_mediaPlayer->setVolume(30);
-
+    m_unMutedVol = 30;
 
 
     //m_mediaPlayer->play();
@@ -47,7 +47,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
+
+
+
     connect(m_downVoiceWidget->m_btnMute, SIGNAL(clicked(bool)), this, SLOT(mute()));
+    connect(m_downVoiceWidget->m_sliderVol, SIGNAL(valueChanged(int)), this, SLOT(changeVolVal(int)));
 }
 
 MainWindow::~MainWindow() {
@@ -82,12 +86,25 @@ void MainWindow::playPrevSong() {
 
 void MainWindow::mute() {
     if (! m_downVoiceWidget->m_btnMute->isChecked()) {
-        m_mediaPlayer->setVolume(30);//设置default音量
+        //设置default音量
+        m_mediaPlayer->setVolume(m_unMutedVol);
+        m_downVoiceWidget->m_sliderVol->setValue(m_unMutedVol);
     }
     else {
         m_mediaPlayer->setVolume(0);
+        m_downVoiceWidget->m_sliderVol->setValue(0);
     }
 
+}
+
+void MainWindow::changeVolVal(int val) {
+    if (m_downVoiceWidget->m_btnMute->isChecked() && val != 0) {
+        m_downVoiceWidget->m_btnMute->setChecked(false);
+    }
+    if (val != 0){  //否则unmutedvol永远是0
+        m_unMutedVol = val;
+    }
+    m_mediaPlayer->setVolume(val);
 }
 
 void MainWindow::setDownWidget(QWidget *widget) {

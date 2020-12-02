@@ -1,19 +1,22 @@
-MySlider::groove:horizonal {
-    position:absolute;
-    height:10px;
 
-}
 
 MySlider::handle:horizonal {
+    margin: -7px -7px -7px -7px;
     image:url(:/images/images/redDot.png);
-    border-radius: 4px;
+
 }
 
 MySlider::handle:horizonal:hover {
     image:url(:/images/images/redDot.png);
-    border-radius: 8px;
+
 }
 
 MySlider::sub-page:horizonal {
     background: #E94B4B;
+    margin: 12px, 12px, 0, 0;
+}
+
+QSilder::groove:horizonal {
+    left: 12px;
+    right: 12px;
 }

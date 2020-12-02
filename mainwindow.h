@@ -25,6 +25,8 @@ private slots:
     void playNextSong();
     void playPrevSong();
     void mute();
+
+    void changeVolVal(int val);
 private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
@@ -33,6 +35,6 @@ private:
     Down_PlayWidget* m_downPlayWidget;
     Down_VoiceWidget* m_downVoiceWidget;
     void setDownWidget(QWidget* widget);
-
+    int m_unMutedVol;
 };
 #endif // MAINWINDOW_H

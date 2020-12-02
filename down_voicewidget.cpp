@@ -19,7 +19,7 @@ Down_VoiceWidget::Down_VoiceWidget(QWidget *parent)
 
     m_sliderVol = new MySlider(this);
     m_sliderVol->setOrientation(Qt::Horizontal);
-    m_sliderVol->setGeometry(50,32,100,8);
+    m_sliderVol->setGeometry(50,22,100,30);
     m_sliderVol->setMinimum(0);
     m_sliderVol->setMaximum(100);
     m_sliderVol->setSingleStep(10);
