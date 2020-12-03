@@ -27,12 +27,18 @@ MainWindow::MainWindow(QWidget *parent)
     m_downPlayWidget->setMediaPlayer(m_mediaPlayer);
 
 
+    //播放列表可视化
+    m_downBtnPlayList = new Down_PlayListButton(m_downWidget);
+    m_downBtnPlayList->setGeometry(1220, 0, 180, 70);
+    m_showPlayList = new Down_PlayList(this);
+
+
     //init of play list
     m_mediaPlayList = new QMediaPlaylist(this);
     m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
-    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
-    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
-   // m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test2.mp3"));
+    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
+    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
+    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test2.mp3"));
     m_mediaPlayList->setCurrentIndex(0);
 
     //bind list with player
@@ -45,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
     connect(m_downVoiceWidget->m_btnMute, SIGNAL(clicked(bool)), this, SLOT(mute()));
+    connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
 }
 
 MainWindow::~MainWindow() {
@@ -97,4 +104,12 @@ void MainWindow::setDownWidget(QWidget *widget) {
     //widget->show();
 }
 
-
+void MainWindow::showPlayList() {
+    if(!m_showPlayList->isVisible()) {
+        m_showPlayList->show();
+        m_showPlayList->setGeometry(0,0,1300,700);
+    }
+    else {
+        m_showPlayList->hide();
+    }
+}
