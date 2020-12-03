@@ -1,0 +1,22 @@
+
+
+MySlider::handle:horizonal {
+    margin: -7px -7px -7px -7px;
+    image:url(:/images/images/redDot.png);
+
+}
+
+MySlider::handle:horizonal:hover {
+    image:url(:/images/images/redDot.png);
+
+}
+
+MySlider::sub-page:horizonal {
+    background: #E94B4B;
+    margin: 12px, 12px, 0, 0;
+}
+
+QSilder::groove:horizonal {
+    left: 12px;
+    right: 12px;
+}
