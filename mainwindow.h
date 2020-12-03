@@ -7,6 +7,9 @@
 #include "down_playwidget.h"
 #include "down_voicewidget.h"
 #include "down_playprogressbar.h"
+#include "down_playlistbutton.h"
+#include "down_playlist.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -25,11 +28,11 @@ private slots:
     void playNextSong();
     void playPrevSong();
     void mute();
-
     void changeVolVal(int val);
     void changePlayProgress(int val);
     void onDurationChanged(qint64 duration);
     void onPositionChanged(qint64 position);
+    void showPlayList();
 private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
@@ -40,6 +43,9 @@ private:
     Down_PlayWidget* m_downPlayWidget;
     Down_VoiceWidget* m_downVoiceWidget;
     Down_PlayProgressBar* m_downProgressBar;
+    Down_PlayListButton* m_downBtnPlayList;   //播放列表按钮
+    Down_PlayList* m_showPlayList;  //显示播放列表
+    void setDownWidget(QWidget* widget);
 
     void setDownWidget(QWidget* widget);
     int m_unMutedVol;
