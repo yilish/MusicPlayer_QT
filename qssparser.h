@@ -5,8 +5,7 @@
 #include <QFile>
 
 
-class QSSParser
-{
+class QSSParser {
 public:
     explicit QSSParser(QFile* m_file);
     QString getStyleSheet();
