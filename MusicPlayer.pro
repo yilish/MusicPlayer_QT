@@ -16,6 +16,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    down_playlist.cpp \
+    down_playlistbutton.cpp \
     down_playprogressbar.cpp \
     down_playwidget.cpp \
     down_voicewidget.cpp \
@@ -25,6 +27,8 @@ SOURCES += \
     qssparser.cpp
 
 HEADERS += \
+    down_playlist.h \
+    down_playlistbutton.h \
     down_playprogressbar.h \
     down_playwidget.h \
     down_voicewidget.h \
