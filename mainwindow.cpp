@@ -16,6 +16,13 @@ MainWindow::MainWindow(QWidget *parent)
     //下边框初始化
     m_downWidget = new QWidget(this);
     setDownWidget(m_downWidget);
+
+
+    //左侧菜单初始化
+    m_leftTable = new Left_Table(this);
+    m_leftTable->setGeometry(0, 0, 300, 730);
+
+
     m_downPlayWidget = new Down_PlayWidget(m_downWidget);
     m_downPlayWidget->setGeometry(0,0,250,70);
 
@@ -59,15 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
-
-
-
     connect(m_downVoiceWidget->m_btnMute, SIGNAL(clicked(bool)), this, SLOT(mute()));
     connect(m_downVoiceWidget->m_sliderVol, SIGNAL(valueChanged(int)), this, SLOT(changeVolVal(int)));
-
     connect(m_mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(onPositionChanged(qint64)));
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(onDurationChanged(qint64)));
-
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
 }
@@ -191,10 +193,12 @@ void MainWindow::setDownWidget(QWidget *widget) {
     //widget->show();
 }
 
+
 void MainWindow::showPlayList() {
+
     if(!m_showPlayList->isVisible()) {
         m_showPlayList->show();
-        m_showPlayList->setGeometry(0,0,1300,700);
+        m_showPlayList->setGeometry(800, 0, 500, 730);
     }
     else {
         m_showPlayList->hide();

@@ -9,6 +9,7 @@
 #include "down_playprogressbar.h"
 #include "down_playlistbutton.h"
 #include "down_playlist.h"
+#include "left_table.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -45,9 +46,9 @@ private:
     Down_PlayProgressBar* m_downProgressBar;
     Down_PlayListButton* m_downBtnPlayList;   //播放列表按钮
     Down_PlayList* m_showPlayList;  //显示播放列表
+    Left_Table* m_leftTable;
     void setDownWidget(QWidget* widget);
-
-    void setDownWidget(QWidget* widget);
+    void setLeftWidget(QWidget* widget);
     int m_unMutedVol;
 };
 #endif // MAINWINDOW_H
