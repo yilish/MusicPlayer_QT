@@ -73,5 +73,6 @@
     </qresource>
     <qresource prefix="/qss">
         <file>sliderVolStyle.qss</file>
+        <file>lineSearchStyle.qss</file>
     </qresource>
 </RCC>

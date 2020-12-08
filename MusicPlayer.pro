@@ -24,7 +24,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     myslider.cpp \
-    qssparser.cpp
+    qssparser.cpp \
+    top_searchwidget.cpp
 
 HEADERS += \
     down_playlist.h \
@@ -34,7 +35,8 @@ HEADERS += \
     down_voicewidget.h \
     mainwindow.h \
     myslider.h \
-    qssparser.h
+    qssparser.h \
+    top_searchwidget.h
 
 FORMS += \
     mainwindow.ui
