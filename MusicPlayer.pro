@@ -1,4 +1,5 @@
-QT       += core gui
+QT       += core gui \
+    quick
 QT       += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -21,6 +22,7 @@ SOURCES += \
     down_playprogressbar.cpp \
     down_playwidget.cpp \
     down_voicewidget.cpp \
+    left_table.cpp \
     main.cpp \
     mainwindow.cpp \
     myslider.cpp \
@@ -33,6 +35,7 @@ HEADERS += \
     down_playprogressbar.h \
     down_playwidget.h \
     down_voicewidget.h \
+    left_table.h \
     mainwindow.h \
     myslider.h \
     qssparser.h \
