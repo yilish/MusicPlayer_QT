@@ -9,7 +9,12 @@
 #include "down_playprogressbar.h"
 #include "down_playlistbutton.h"
 #include "down_playlist.h"
+
+#include "top_searchwidget.h"
+#include <QNetworkAccessManager>
+
 #include "left_table.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -34,9 +39,11 @@ private slots:
     void onDurationChanged(qint64 duration);
     void onPositionChanged(qint64 position);
     void showPlayList();
+    void searchSong();
 private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
+    QWidget* m_topWidget;
     QString m_tDuration;
     QString m_tPosition;
     QMediaPlayer* m_mediaPlayer;
@@ -46,9 +53,17 @@ private:
     Down_PlayProgressBar* m_downProgressBar;
     Down_PlayListButton* m_downBtnPlayList;   //播放列表按钮
     Down_PlayList* m_showPlayList;  //显示播放列表
-    Left_Table* m_leftTable;
+
+
+    Top_SearchWidget* m_topSearchWidget;
     void setDownWidget(QWidget* widget);
+    void setTopWidget(QWidget* widget);
+    //void setDownWidget(QWidget* widget);
+
+    Left_Table* m_leftTable;
+    //void setDownWidget(QWidget* widget);
     void setLeftWidget(QWidget* widget);
+
     int m_unMutedVol;
 };
 #endif // MAINWINDOW_H

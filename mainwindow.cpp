@@ -25,10 +25,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_downPlayWidget = new Down_PlayWidget(m_downWidget);
     m_downPlayWidget->setGeometry(0,0,250,70);
-
-
     m_downVoiceWidget = new Down_VoiceWidget(m_downWidget);
     m_downVoiceWidget->setGeometry(940, 0, 180, 70);
+
+
+    //上边框初始化
+    m_topWidget = new QWidget(this);
+    setTopWidget(m_topWidget);
+    m_topSearchWidget = new Top_SearchWidget(m_topWidget);
+    m_topSearchWidget->setGeometry(348, 20, 360, 48);
+
+
     //播放器初始化
     m_mediaPlayer = new QMediaPlayer(this);
     m_downPlayWidget->setMediaPlayer(m_mediaPlayer);
@@ -43,8 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
     //init of play list
     m_mediaPlayList = new QMediaPlaylist(this);
     m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
+    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
+    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
     //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test2.mp3"));
     m_mediaPlayList->setCurrentIndex(0);
 
@@ -72,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(onDurationChanged(qint64)));
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
+
+    connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
 }
 
 MainWindow::~MainWindow() {
@@ -142,6 +151,9 @@ void MainWindow::changeVolVal(int val) {
 }
 
 void MainWindow::changePlayProgress(int val) {
+    if (! m_mediaPlayList->mediaCount()) {
+        return;
+    }
     if (qAbs(m_mediaPlayer->position() - val)> 99) {
         m_mediaPlayer->setPosition(val);
     }
@@ -150,6 +162,9 @@ void MainWindow::changePlayProgress(int val) {
 }
 
 void MainWindow::onDurationChanged(qint64 duration){
+    if (! m_mediaPlayList->mediaCount()) {
+        return;
+    }
     m_downProgressBar->m_sliderPlayProgress->setMaximum(duration);
 
     int sec = duration / 1000;      //秒数
@@ -194,6 +209,16 @@ void MainWindow::setDownWidget(QWidget *widget) {
 }
 
 
+void MainWindow::setTopWidget(QWidget *widget) {
+    widget->setGeometry(0, 0, 1300, 65);
+    QPalette pal(widget->palette());
+
+    pal.setColor(QPalette::Background, QColor(50, 50, 50));
+    widget->setAutoFillBackground(true);
+    widget->setPalette(pal);
+    widget->show();
+}
+
 void MainWindow::showPlayList() {
 
     if(!m_showPlayList->isVisible()) {
@@ -202,5 +227,30 @@ void MainWindow::showPlayList() {
     }
     else {
         m_showPlayList->hide();
+    }
+}
+
+void MainWindow::searchSong() {
+    auto strToSearch = m_topSearchWidget->m_lineSearch->text();
+    qDebug() << "Hello" + strToSearch.toLatin1();
+    QUrl url = QUrl("https://api.paugram.com/netease/?title=" + strToSearch);
+    QNetworkAccessManager manager;
+    QNetworkReply* searchReply = manager.get(QNetworkRequest(url));
+    QEventLoop loop;
+    connect (searchReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+
+    if (searchReply->error() == QNetworkReply::NoError) {
+        QByteArray array = searchReply->readAll();
+        QJsonParseError jsonErr;
+        QJsonDocument json = QJsonDocument::fromJson(array, &jsonErr);
+
+        if (jsonErr.error == QJsonParseError::NoError) {
+            QJsonObject obj = json.object();
+            QJsonArray jsonArray = obj["data"].toArray();
+
+
+        }
     }
 }
