@@ -12,6 +12,14 @@ MainWindow::MainWindow(QWidget *parent)
     //setWindowFlags(Qt::FramelessWindowHint|windowFlags());//实现无边框
 
 
+
+    //下载进度条的初始化
+    m_downloadProgressBar = new QProgressBar(this);
+    m_downloadProgressBar->setGeometry(400, 200, 300, 50);
+    m_downloadProgressBar->hide();
+
+
+
     //边框初始化
     //下边框初始化
     m_downWidget = new QWidget(this);
@@ -59,15 +67,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_mediaPlayer->setPlaylist(m_mediaPlayList);
     m_mediaPlayer->setVolume(30);
     m_unMutedVol = 30;
-    auto test = m_mediaPlayer->duration();
+
     //播放进度条初始化
 
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
 
     m_downProgressBar->setGeometry(250, 0, 690, 70);
     auto durTime = m_mediaPlayer->position();
-    //m_downProgressBar->m_lblRight->setText();
-    //m_mediaPlayer->play();
     m_downProgressBar->update();
     //连接信号与槽
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
@@ -249,8 +255,75 @@ void MainWindow::searchSong() {
         if (jsonErr.error == QJsonParseError::NoError) {
             QJsonObject obj = json.object();
             QJsonArray jsonArray = obj["data"].toArray();
+            // album, artist, cached, cover, id, link, lyric
+            // served, sub_lyric, title
+            auto absPath = QApplication::applicationDirPath();
 
+            auto filePath = "D:/DSproj/" + obj["artist"].toString() +
+                    "-" + obj["title"].toString() + ".mp3";
+            auto albumFilePath = "D:/DSproj/" + obj["artist"].toString() +
+                    "-" + obj["title"].toString() + "-album.jpg";
+            qDebug() << "FilePath:" << filePath;
+            m_curFile = new QFile(filePath);
 
+            m_curFile->open(QIODevice::WriteOnly);
+
+            m_accessManager = new QNetworkAccessManager(this);
+            m_request = QNetworkRequest();
+
+            auto link = obj["link"].toString();
+            m_request.setUrl(link);
+            m_reply = m_accessManager->get(m_request);
+
+            m_downloadProgressBar->show();
+//            if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) != 301) {
+//                qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+//                auto redirectLink = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
+//                qDebug() << redirectLink;
+//                request.setUrl(redirectLink);
+//                reply = accessManager->get(request);
+//            }
+            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
+//            connect(m_reply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
+//            connect(m_reply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
+//            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
+
+            //file->open(QIODevice::WriteOnly|QIODevice::Truncate);
         }
     }
+
+}
+
+void MainWindow::firstFinished() {
+    auto redirUrl = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+    m_request.setUrl(redirUrl.toString());
+    m_reply = m_accessManager->get(m_request);
+    connect(m_reply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
+    connect(m_reply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
+    connect(m_reply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
+}
+
+
+void MainWindow::httpReadyRead() {
+    if (m_curFile) {
+        m_curFile->write(m_reply->readAll());
+    }
+}
+
+void MainWindow::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes) {
+    m_downloadProgressBar->setMaximum(totalBytes);
+
+    m_downloadProgressBar->setValue(bytesRead);
+}
+
+void MainWindow::httpFinished() {
+    m_downloadProgressBar->hide();
+
+    if (m_curFile) {
+        m_curFile->close();
+        delete m_curFile;
+        m_curFile = nullptr;
+    }
+
+
 }
