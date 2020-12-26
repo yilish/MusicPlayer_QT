@@ -26,6 +26,10 @@ Top_SearchWidget::Top_SearchWidget(QWidget* parent):
                                 QPushButton:hover{image:url(:/images/images/search_press.png)}\
                                 QPushButton:pressed{image:url(:/images/images/search_normal.png)}");
     m_btnSearch->setCursor(Qt::PointingHandCursor);
+
+
+
+
 }
 
 void Top_SearchWidget::paintEvent(QPaintEvent *event)

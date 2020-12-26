@@ -13,7 +13,7 @@
 #include <qssparser.h>
 #include <QAction>
 #include <QPainter>
-
+#include <QProgressBar>
 class Top_SearchWidget: public QWidget
 {
 public:
@@ -21,6 +21,7 @@ public:
     QPushButton* m_btnSearch;
     QAction* m_actionSearch;
     QLineEdit* m_lineSearch;
+    QProgressBar* m_downloadProgress;
 private:
     void paintEvent(QPaintEvent *event);
 signals:
