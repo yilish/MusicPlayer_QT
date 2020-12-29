@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_searchResult = new Middle_searchResult(this);
     m_searchResult->setGeometry(348, 65, 330, 500);
     m_searchResult->setEditTriggers(QAbstractItemView::NoEditTriggers);//设置不可更改里面的内容
-
+    m_searchResult->hide();             //默认不出现
     //播放器初始化
     m_mediaPlayer = new QMediaPlayer(this);
     m_downPlayWidget->setMediaPlayer(m_mediaPlayer);
@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
     //播放进度条初始化
 
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
-
+    m_downloadProgressBar->raise();
     m_downProgressBar->setGeometry(250, 0, 690, 70);
     //auto durTime = m_mediaPlayer->position();
     m_downProgressBar->update();
@@ -271,7 +271,8 @@ void MainWindow::showPlayList() {
 
 void MainWindow::searchSong() {
     auto strToSearch = m_topSearchWidget->m_lineSearch->text();
-    qDebug() << "Hello" + strToSearch.toLatin1();
+    //qDebug() << "Hello" + strToSearch.toLatin1();
+    m_searchResult->show();
     QUrl netEaseUrl = QUrl("http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s=" +strToSearch + "&type=1&offset=0&total=true&limit=10");
     QUrl url = QUrl("https://api.paugram.com/netease/?title=" + strToSearch);
     QNetworkAccessManager manager;
@@ -302,7 +303,7 @@ void MainWindow::searchSong() {
             }
 
             m_searchResult->setList(&strList);
-            connect(m_searchResult, &QAbstractItemView::doubleClicked, this, &MainWindow::downloadSelectedSong);
+            connect(m_searchResult, &QAbstractItemView::doubleClicked, this, &MainWindow::downloadSelectedSong, Qt::UniqueConnection);
 
 //            auto objSong0 = m_songArr[0].toObject();
 //            auto doubleId = objSong0.value("id").toDouble();
@@ -342,22 +343,21 @@ void MainWindow::searchSong() {
 }
 
 void MainWindow::firstFinished() {
-    auto redirUrl = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
-    m_request.setUrl(redirUrl.toString());
-    m_reply = m_accessManager->get(m_request);
-    connect(m_reply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
-    connect(m_reply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
-    connect(m_reply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
+
+    connect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
+    connect(m_redirectedReply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
+    connect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
 }
 
 
 void MainWindow::httpReadyRead() {
     if (m_curFile) {
-        m_curFile->write(m_reply->readAll());
+        m_curFile->write(m_redirectedReply->readAll());
     }
 }
 
 void MainWindow::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes) {
+    qDebug() << bytesRead << "/" << totalBytes;
     m_downloadProgressBar->setMaximum(totalBytes);
 
     m_downloadProgressBar->setValue(bytesRead);
@@ -365,12 +365,24 @@ void MainWindow::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes) {
 
 void MainWindow::httpFinished() {
     m_downloadProgressBar->hide();
-
+    qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
+    if (m_curFile->size() > 1000) {
+        disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
+        disconnect(m_redirectedReply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
+        disconnect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
+    }
     if (m_curFile) {
         m_curFile->close();
         delete m_curFile;
         m_curFile = nullptr;
     }
+
+    if(m_redirectedReply){
+
+        delete m_redirectedReply;
+    }
+    m_redirectedReply = nullptr;
+
 }
 
 void MainWindow::downloadSelectedSong(const QModelIndex &index) {
@@ -391,16 +403,42 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     m_curFile = new QFile(filePath);
 
     m_curFile->open(QIODevice::WriteOnly);
-
+    if (!m_curFile) {
+        qDebug() << "文件打开失败";
+        return;
+    }
     m_accessManager = new QNetworkAccessManager(this);
     m_request = QNetworkRequest();
 
     auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
     m_request.setUrl(link);
     m_reply = m_accessManager->get(m_request);
-
     m_downloadProgressBar->show();
-    m_downloadProgressBar->raise();
+    //m_downloadProgressBar->raise();
     m_searchResult->hide();
-    connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
+    connect(m_reply,&QNetworkReply::finished,this,&MainWindow::urlRedirected);
+    connect(m_reply,QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),          //异常
+                this,&MainWindow::doProcessError);
+    //disconnect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
+}
+
+void MainWindow::urlRedirected()
+{
+    auto url = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
+
+    m_redirectedRequest = QNetworkRequest();
+    qDebug() << url;
+    m_redirectedRequest.setUrl(url);
+    m_redirAccMgr = new QNetworkAccessManager(this);
+    m_redirectedReply = m_redirAccMgr->get(m_redirectedRequest);
+    connect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
+    connect(m_redirectedReply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
+    connect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
+    connect(m_redirectedReply,QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),          //异常
+            this,&MainWindow::doProcessError);
+    //connect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
+}
+
+void MainWindow::doProcessError(QNetworkReply::NetworkError code) {
+    qDebug() << code;
 }
