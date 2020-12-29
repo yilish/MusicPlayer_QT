@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //下载进度条的初始化
     m_downloadProgressBar = new QProgressBar(this);
-    m_downloadProgressBar->setGeometry(400, 200, 300, 50);
+    m_downloadProgressBar->setGeometry(348, 500, 300, 50);
     m_downloadProgressBar->hide();
 
 
@@ -42,7 +42,12 @@ MainWindow::MainWindow(QWidget *parent)
     setTopWidget(m_topWidget);
     m_topSearchWidget = new Top_SearchWidget(m_topWidget);
     m_topSearchWidget->setGeometry(348, 20, 360, 48);
-
+    //搜索栏初始化
+    //起始位置: 315, 65
+    //大小: 360, (500)?
+    m_searchResult = new Middle_searchResult(this);
+    m_searchResult->setGeometry(348, 65, 330, 500);
+    m_searchResult->setEditTriggers(QAbstractItemView::NoEditTriggers);//设置不可更改里面的内容
 
     //播放器初始化
     m_mediaPlayer = new QMediaPlayer(this);
@@ -73,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
 
     m_downProgressBar->setGeometry(250, 0, 690, 70);
-    auto durTime = m_mediaPlayer->position();
+    //auto durTime = m_mediaPlayer->position();
     m_downProgressBar->update();
     //连接信号与槽
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
@@ -225,6 +230,34 @@ void MainWindow::setTopWidget(QWidget *widget) {
     widget->show();
 }
 
+void MainWindow::createFolder(QString folder) {
+    QDir* newFolder = new QDir;
+    bool exist = newFolder->exists(folder);
+
+    if (exist) {
+        qDebug() << "This folder" << folder << "already exists" << endl;
+    }
+    else {
+        newFolder->mkdir(folder);
+    }
+}
+
+QString MainWindow::getSongId(QJsonObject obj) {
+    auto doubleId = obj.value("id").toDouble();
+
+    QString strId = QString::number(doubleId, 'f', 0);
+
+    return strId;
+}
+
+QString MainWindow::getArtistName(QJsonObject obj) {
+    auto artistArr = obj.value("artists");
+    auto artistObj = artistArr[0];
+    auto artistName = artistObj["name"];
+    auto strArtistName = artistName.toString();
+    return strArtistName;
+}
+
 void MainWindow::showPlayList() {
 
     if(!m_showPlayList->isVisible()) {
@@ -239,9 +272,10 @@ void MainWindow::showPlayList() {
 void MainWindow::searchSong() {
     auto strToSearch = m_topSearchWidget->m_lineSearch->text();
     qDebug() << "Hello" + strToSearch.toLatin1();
+    QUrl netEaseUrl = QUrl("http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s=" +strToSearch + "&type=1&offset=0&total=true&limit=10");
     QUrl url = QUrl("https://api.paugram.com/netease/?title=" + strToSearch);
     QNetworkAccessManager manager;
-    QNetworkReply* searchReply = manager.get(QNetworkRequest(url));
+    QNetworkReply* searchReply = manager.get(QNetworkRequest(netEaseUrl));
     QEventLoop loop;
     connect (searchReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
@@ -251,44 +285,57 @@ void MainWindow::searchSong() {
         QByteArray array = searchReply->readAll();
         QJsonParseError jsonErr;
         QJsonDocument json = QJsonDocument::fromJson(array, &jsonErr);
-
+        QStringList strList;
         if (jsonErr.error == QJsonParseError::NoError) {
             QJsonObject obj = json.object();
-            QJsonArray jsonArray = obj["data"].toArray();
-            // album, artist, cached, cover, id, link, lyric
-            // served, sub_lyric, title
-            auto absPath = QApplication::applicationDirPath();
+            //处理搜索到的结果
 
-            auto filePath = "D:/DSproj/" + obj["artist"].toString() +
-                    "-" + obj["title"].toString() + ".mp3";
-            auto albumFilePath = "D:/DSproj/" + obj["artist"].toString() +
-                    "-" + obj["title"].toString() + "-album.jpg";
-            qDebug() << "FilePath:" << filePath;
-            m_curFile = new QFile(filePath);
+            auto res = obj["result"].toObject();
+            this->m_songArr = res["songs"].toArray();
+            qDebug() << m_songArr;
+            for (int i = 0; i < m_songArr.size(); i++) {
+                auto objSong = m_songArr[i].toObject();
+                auto id = getSongId(objSong);
+                auto artistName = getArtistName(objSong);
+                strList.push_back(artistName + '-' + objSong["name"].toString());
+                qDebug() << objSong["name"].toString() << artistName;
+            }
 
-            m_curFile->open(QIODevice::WriteOnly);
+            m_searchResult->setList(&strList);
+            connect(m_searchResult, &QAbstractItemView::doubleClicked, this, &MainWindow::downloadSelectedSong);
 
-            m_accessManager = new QNetworkAccessManager(this);
-            m_request = QNetworkRequest();
+//            auto objSong0 = m_songArr[0].toObject();
+//            auto doubleId = objSong0.value("id").toDouble();
 
-            auto link = obj["link"].toString();
-            m_request.setUrl(link);
-            m_reply = m_accessManager->get(m_request);
+//            QString strId = QString::number(doubleId, 'f', 0);
+//            qDebug() << doubleId << strId;
 
-            m_downloadProgressBar->show();
-//            if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) != 301) {
-//                qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-//                auto redirectLink = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
-//                qDebug() << redirectLink;
-//                request.setUrl(redirectLink);
-//                reply = accessManager->get(request);
-//            }
-            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
-//            connect(m_reply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
-//            connect(m_reply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
-//            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
 
-            //file->open(QIODevice::WriteOnly|QIODevice::Truncate);
+
+//            auto absPath = QApplication::applicationDirPath();
+//            auto dir = QApplication::applicationDirPath() + QString("/music/");
+//            createFolder(dir);
+//            auto artistArr = objSong0.value("artists");
+//            auto artistObj = artistArr[0];
+//            auto artistName = artistObj["name"];
+//            auto strArtistName = artistName.toString();
+//            auto filePath = dir  + strArtistName + "-" + objSong0["name"].toString() + ".mp3";
+//            qDebug() << "FilePath:" << filePath;
+//            m_curFile = new QFile(filePath);
+
+//            m_curFile->open(QIODevice::WriteOnly);
+
+//            m_accessManager = new QNetworkAccessManager(this);
+//            m_request = QNetworkRequest();
+
+//            auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
+//            m_request.setUrl(link);
+//            m_reply = m_accessManager->get(m_request);
+
+//            m_downloadProgressBar->show();
+//            m_downloadProgressBar->raise();
+//            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
+            // ToDo: 下载完成后加入自动扫描到歌单的功能
         }
     }
 
@@ -324,6 +371,36 @@ void MainWindow::httpFinished() {
         delete m_curFile;
         m_curFile = nullptr;
     }
+}
+
+void MainWindow::downloadSelectedSong(const QModelIndex &index) {
+    qDebug() << index;
+    qDebug() << index.row();
+
+    auto objSong = m_songArr[index.row()].toObject();
+    auto strId = getSongId(objSong);
 
 
+
+    auto absPath = QApplication::applicationDirPath();
+    auto dir = QApplication::applicationDirPath() + QString("/music/");
+    createFolder(dir);
+
+    auto filePath = dir  + index.data().toString() + ".mp3";
+    qDebug() << "FilePath:" << filePath;
+    m_curFile = new QFile(filePath);
+
+    m_curFile->open(QIODevice::WriteOnly);
+
+    m_accessManager = new QNetworkAccessManager(this);
+    m_request = QNetworkRequest();
+
+    auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
+    m_request.setUrl(link);
+    m_reply = m_accessManager->get(m_request);
+
+    m_downloadProgressBar->show();
+    m_downloadProgressBar->raise();
+    m_searchResult->hide();
+    connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
 }
