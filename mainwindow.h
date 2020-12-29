@@ -45,7 +45,7 @@ private slots:
     void httpReadyRead();
     void updateDataReadProgress(qint64 bytesRead, qint64 totalBytes);
     void httpFinished();
-
+    void downloadSelectedSong(const QModelIndex &index);
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
@@ -71,7 +71,7 @@ private:
     Top_SearchWidget* m_topSearchWidget;
     Middle_searchResult* m_searchResult;
     QProgressBar* m_downloadProgressBar;
-
+    QJsonArray m_songArr;
     QFile* m_curFile;
     Left_Table* m_leftTable;
 

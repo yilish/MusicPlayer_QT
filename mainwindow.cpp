@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //下载进度条的初始化
     m_downloadProgressBar = new QProgressBar(this);
-    m_downloadProgressBar->setGeometry(400, 200, 300, 50);
+    m_downloadProgressBar->setGeometry(348, 500, 300, 50);
     m_downloadProgressBar->hide();
 
 
@@ -47,6 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
     //大小: 360, (500)?
     m_searchResult = new Middle_searchResult(this);
     m_searchResult->setGeometry(348, 65, 330, 500);
+    m_searchResult->setEditTriggers(QAbstractItemView::NoEditTriggers);//设置不可更改里面的内容
+
     //播放器初始化
     m_mediaPlayer = new QMediaPlayer(this);
     m_downPlayWidget->setMediaPlayer(m_mediaPlayer);
@@ -289,49 +291,50 @@ void MainWindow::searchSong() {
             //处理搜索到的结果
 
             auto res = obj["result"].toObject();
-            auto songsArr = res["songs"].toArray();
-            for (int i = 0; i < songsArr.size(); i++) {
-                auto objSong = songsArr[i].toObject();
+            this->m_songArr = res["songs"].toArray();
+            qDebug() << m_songArr;
+            for (int i = 0; i < m_songArr.size(); i++) {
+                auto objSong = m_songArr[i].toObject();
                 auto id = getSongId(objSong);
                 auto artistName = getArtistName(objSong);
-                strList.push_back(artistName + objSong["name"].toString());
+                strList.push_back(artistName + '-' + objSong["name"].toString());
                 qDebug() << objSong["name"].toString() << artistName;
             }
 
             m_searchResult->setList(&strList);
+            connect(m_searchResult, &QAbstractItemView::doubleClicked, this, &MainWindow::downloadSelectedSong);
+
+//            auto objSong0 = m_songArr[0].toObject();
+//            auto doubleId = objSong0.value("id").toDouble();
+
+//            QString strId = QString::number(doubleId, 'f', 0);
+//            qDebug() << doubleId << strId;
 
 
-            auto objSong0 = songsArr[0].toObject();
-            auto doubleId = objSong0.value("id").toDouble();
 
-            QString strId = QString::number(doubleId, 'f', 0);
-            qDebug() << doubleId << strId;
+//            auto absPath = QApplication::applicationDirPath();
+//            auto dir = QApplication::applicationDirPath() + QString("/music/");
+//            createFolder(dir);
+//            auto artistArr = objSong0.value("artists");
+//            auto artistObj = artistArr[0];
+//            auto artistName = artistObj["name"];
+//            auto strArtistName = artistName.toString();
+//            auto filePath = dir  + strArtistName + "-" + objSong0["name"].toString() + ".mp3";
+//            qDebug() << "FilePath:" << filePath;
+//            m_curFile = new QFile(filePath);
 
+//            m_curFile->open(QIODevice::WriteOnly);
 
+//            m_accessManager = new QNetworkAccessManager(this);
+//            m_request = QNetworkRequest();
 
-            auto absPath = QApplication::applicationDirPath();
-            auto dir = QApplication::applicationDirPath() + QString("/music/");
-            createFolder(dir);
-            auto artistArr = objSong0.value("artists");
-            auto artistObj = artistArr[0];
-            auto artistName = artistObj["name"];
-            auto strArtistName = artistName.toString();
-            auto filePath = dir  + strArtistName + "-" + objSong0["name"].toString() + ".mp3";
-            qDebug() << "FilePath:" << filePath;
-            m_curFile = new QFile(filePath);
+//            auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
+//            m_request.setUrl(link);
+//            m_reply = m_accessManager->get(m_request);
 
-            m_curFile->open(QIODevice::WriteOnly);
-
-            m_accessManager = new QNetworkAccessManager(this);
-            m_request = QNetworkRequest();
-
-            auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
-            m_request.setUrl(link);
-            m_reply = m_accessManager->get(m_request);
-
-            m_downloadProgressBar->show();
-
-            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
+//            m_downloadProgressBar->show();
+//            m_downloadProgressBar->raise();
+//            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
             // ToDo: 下载完成后加入自动扫描到歌单的功能
         }
     }
@@ -368,4 +371,36 @@ void MainWindow::httpFinished() {
         delete m_curFile;
         m_curFile = nullptr;
     }
+}
+
+void MainWindow::downloadSelectedSong(const QModelIndex &index) {
+    qDebug() << index;
+    qDebug() << index.row();
+
+    auto objSong = m_songArr[index.row()].toObject();
+    auto strId = getSongId(objSong);
+
+
+
+    auto absPath = QApplication::applicationDirPath();
+    auto dir = QApplication::applicationDirPath() + QString("/music/");
+    createFolder(dir);
+
+    auto filePath = dir  + index.data().toString() + ".mp3";
+    qDebug() << "FilePath:" << filePath;
+    m_curFile = new QFile(filePath);
+
+    m_curFile->open(QIODevice::WriteOnly);
+
+    m_accessManager = new QNetworkAccessManager(this);
+    m_request = QNetworkRequest();
+
+    auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
+    m_request.setUrl(link);
+    m_reply = m_accessManager->get(m_request);
+
+    m_downloadProgressBar->show();
+    m_downloadProgressBar->raise();
+    m_searchResult->hide();
+    connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
 }
