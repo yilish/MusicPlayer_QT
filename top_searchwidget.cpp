@@ -13,9 +13,6 @@ Top_SearchWidget::Top_SearchWidget(QWidget* parent):
     auto str = qss.getStyleSheet();
     m_lineSearch->setStyleSheet(str);
     m_lineSearch->setPlaceholderText(QString("搜索音乐,歌手,歌词,用户"));
-//    m_actionSearch = new QAction(m_lineSearch);
-//    m_actionSearch->setIcon(QIcon(":/images/images/search_normal.png"));
-//    m_lineSearch->addAction(m_actionSearch, QLineEdit::TrailingPosition);
 
     m_lineSearch->setPalette(pal);
     m_btnSearch = new QPushButton(this);
