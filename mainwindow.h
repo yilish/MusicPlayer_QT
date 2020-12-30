@@ -47,7 +47,6 @@ private slots:
     void httpFinished();
     void downloadSelectedSong(const QModelIndex &index);
     void urlRedirected();
-
     void doProcessError(QNetworkReply::NetworkError code);
 private:
     void setDownWidget(QWidget* widget);
