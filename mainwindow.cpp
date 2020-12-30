@@ -92,6 +92,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
 
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
+
+    connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
 }
 
 MainWindow::~MainWindow() {
@@ -424,6 +426,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     connect(m_reply,QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),          //异常
                 this,&MainWindow::doProcessError);
     //disconnect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
+
 }
 
 void MainWindow::urlRedirected() {
