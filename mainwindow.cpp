@@ -425,8 +425,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     //disconnect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
 }
 
-void MainWindow::urlRedirected()
-{
+void MainWindow::urlRedirected() {
     auto url = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
 
     m_redirectedRequest = QNetworkRequest();
