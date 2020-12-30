@@ -46,6 +46,9 @@ private slots:
     void updateDataReadProgress(qint64 bytesRead, qint64 totalBytes);
     void httpFinished();
     void downloadSelectedSong(const QModelIndex &index);
+    void urlRedirected();
+
+    void doProcessError(QNetworkReply::NetworkError code);
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
@@ -68,6 +71,9 @@ private:
     QNetworkAccessManager* m_accessManager;
     QNetworkRequest m_request;
     QNetworkReply* m_reply;
+    QNetworkAccessManager* m_redirAccMgr;
+    QNetworkRequest m_redirectedRequest;
+    QNetworkReply* m_redirectedReply;
     Top_SearchWidget* m_topSearchWidget;
     Middle_searchResult* m_searchResult;
     QProgressBar* m_downloadProgressBar;
