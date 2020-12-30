@@ -401,7 +401,6 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     auto filePath = dir  + index.data().toString() + ".mp3";
     qDebug() << "FilePath:" << filePath;
     m_curFile = new QFile(filePath);
-
     m_curFile->open(QIODevice::WriteOnly);
     if (!m_curFile) {
         qDebug() << "文件打开失败";
