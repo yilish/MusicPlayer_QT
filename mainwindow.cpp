@@ -237,10 +237,11 @@ void MainWindow::createFolder(QString folder) {
     bool exist = newFolder->exists(folder);
 
     if (exist) {
-        qDebug() << "This folder" << folder << "already exists" << endl;
+        //qDebug() << "This folder" << folder << "already exists" << endl;
     }
     else {
         newFolder->mkdir(folder);
+        qDebug() << "folder making..";
     }
 }
 
@@ -295,49 +296,16 @@ void MainWindow::searchSong() {
 
             auto res = obj["result"].toObject();
             this->m_songArr = res["songs"].toArray();
-            qDebug() << m_songArr;
             for (int i = 0; i < m_songArr.size(); i++) {
                 auto objSong = m_songArr[i].toObject();
                 auto id = getSongId(objSong);
                 auto artistName = getArtistName(objSong);
                 strList.push_back(artistName + '-' + objSong["name"].toString());
-                qDebug() << objSong["name"].toString() << artistName;
+               // qDebug() << objSong["name"].toString() << artistName;
             }
 
             m_searchResult->setList(&strList);
             connect(m_searchResult, &QAbstractItemView::doubleClicked, this, &MainWindow::downloadSelectedSong, Qt::UniqueConnection);
-
-//            auto objSong0 = m_songArr[0].toObject();
-//            auto doubleId = objSong0.value("id").toDouble();
-
-//            QString strId = QString::number(doubleId, 'f', 0);
-//            qDebug() << doubleId << strId;
-
-
-
-//            auto absPath = QApplication::applicationDirPath();
-//            auto dir = QApplication::applicationDirPath() + QString("/music/");
-//            createFolder(dir);
-//            auto artistArr = objSong0.value("artists");
-//            auto artistObj = artistArr[0];
-//            auto artistName = artistObj["name"];
-//            auto strArtistName = artistName.toString();
-//            auto filePath = dir  + strArtistName + "-" + objSong0["name"].toString() + ".mp3";
-//            qDebug() << "FilePath:" << filePath;
-//            m_curFile = new QFile(filePath);
-
-//            m_curFile->open(QIODevice::WriteOnly);
-
-//            m_accessManager = new QNetworkAccessManager(this);
-//            m_request = QNetworkRequest();
-
-//            auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
-//            m_request.setUrl(link);
-//            m_reply = m_accessManager->get(m_request);
-
-//            m_downloadProgressBar->show();
-//            m_downloadProgressBar->raise();
-//            connect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
             // ToDo: 下载完成后加入自动扫描到歌单的功能
         }
     }
@@ -356,10 +324,11 @@ void MainWindow::httpReadyRead() {
     if (m_curFile) {
         m_curFile->write(m_redirectedReply->readAll());
     }
+
 }
 
 void MainWindow::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes) {
-    qDebug() << bytesRead << "/" << totalBytes;
+    //qDebug() << bytesRead << "/" << totalBytes;
     m_downloadProgressBar->setMaximum(totalBytes);
 
     m_downloadProgressBar->setValue(bytesRead);
@@ -367,12 +336,14 @@ void MainWindow::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes) {
 
 void MainWindow::httpFinished() {
     m_downloadProgressBar->hide();
-    qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
+    //qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
     if (m_curFile->size() > 1000) {
+        m_showPlayList->addSong(m_curSongName);
         disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
         disconnect(m_redirectedReply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
         disconnect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
     }
+
     if (m_curFile) {
         m_curFile->close();
         delete m_curFile;
@@ -380,28 +351,26 @@ void MainWindow::httpFinished() {
     }
 
     if(m_redirectedReply){
-
         delete m_redirectedReply;
     }
     m_redirectedReply = nullptr;
-
 }
 
 void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     qDebug() << index;
-    qDebug() << index.row();
+    //qDebug() << index.row();
 
     auto objSong = m_songArr[index.row()].toObject();
+    //qDebug() << objSong;
     auto strId = getSongId(objSong);
 
-
-
+    qDebug() << strId;
     auto absPath = QApplication::applicationDirPath();
     auto dir = QApplication::applicationDirPath() + QString("/music/");
     createFolder(dir);
-
-    auto filePath = dir  + index.data().toString() + ".mp3";
-    qDebug() << "FilePath:" << filePath;
+    m_curSongName = index.data().toString();
+    auto filePath = dir + m_curSongName + ".mp3";
+    //qDebug() << "FilePath:" << filePath;
     m_curFile = new QFile(filePath);
 
     m_curFile->open(QIODevice::WriteOnly);
@@ -413,6 +382,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     m_request = QNetworkRequest();
 
     auto link = QString("https://music.163.com/song/media/outer/url?id=" + strId);
+
     m_request.setUrl(link);
     m_reply = m_accessManager->get(m_request);
     m_downloadProgressBar->show();
@@ -420,20 +390,55 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     m_searchResult->hide();
 
     //add music information to play list
-    m_showPlayList->addSong(index.data().toString());
+    //qDebug() << m_reply->error();
+
 
     connect(m_reply,&QNetworkReply::finished,this,&MainWindow::urlRedirected);
     connect(m_reply,QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),          //异常
                 this,&MainWindow::doProcessError);
     //disconnect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
 
+
+
+    //download lyrics.
+    auto lyricLink = QString("http://music.163.com/api/song/media?id=" + strId);
+    auto acMgr = new QNetworkAccessManager();
+    auto req =  QNetworkRequest();
+    req.setUrl(lyricLink);
+    m_lyricReply = acMgr->get(req);
+    //qDebug() << m_lyricReply;
+    auto lyricPath = QApplication::applicationDirPath() + QString("/lyric/") ;
+    auto lyricFileName = lyricPath + m_curSongName + ".txt";
+    m_lyricFile = new QFile(lyricFileName);
+    createFolder(lyricPath);
+
+
+
+    QEventLoop loop;
+    connect (m_lyricReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    //qDebug() << m_lyricReply->readAll();
+    QByteArray array = m_lyricReply->readAll();
+    QJsonParseError jsonErr;
+    QJsonDocument json = QJsonDocument::fromJson(array, &jsonErr);
+    auto obj = json.object();
+    if (m_lyricFile->open(QIODevice::WriteOnly|QIODevice::Text)) {
+        //m_lyricFile->write(array);
+
+        QString strLyric = obj["lyric"].toString();
+        QTextStream ts(m_lyricFile);
+        ts << strLyric << endl;
+        m_lyricFile->close();
+    }
+    //json["lyric"];
+    //connect(m_lyricReply, &QNetworkReply::finished,this,&MainWindow::lyricRead);
 }
 
 void MainWindow::urlRedirected() {
     auto url = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString();
 
     m_redirectedRequest = QNetworkRequest();
-    qDebug() << url;
+    //qDebug() << url;
     m_redirectedRequest.setUrl(url);
     m_redirAccMgr = new QNetworkAccessManager(this);
     m_redirectedReply = m_redirAccMgr->get(m_redirectedRequest);
@@ -448,4 +453,9 @@ void MainWindow::urlRedirected() {
 void MainWindow::doProcessError(QNetworkReply::NetworkError code) {
     qDebug() << code;
 
+}
+
+void MainWindow::lyricRead() {
+    m_lyricFile->write(m_lyricReply->readAll());
+    qDebug() << "lyric loaded.";
 }
