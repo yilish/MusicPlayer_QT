@@ -10,7 +10,7 @@ Left_Table::Left_Table(QWidget *parent) : QWidget(parent)
 
     //设置左侧菜单
     m_LeftTable = new QTableView(this);
-    m_LeftTable->setGeometry(0, 0, 300, 730);
+    m_LeftTable->setGeometry(0, 65, 300, 700);
     m_LeftTable->setModel(m_LeftTableModel);
     m_LeftTable->verticalHeader()->hide();
     //m_LeftTable->horizontalHeader()->hide();

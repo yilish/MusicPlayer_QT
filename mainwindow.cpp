@@ -63,8 +63,8 @@ MainWindow::MainWindow(QWidget *parent)
     //init of play list
     m_mediaPlayList = new QMediaPlaylist(this);
     m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
-    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
-    m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
+    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
+    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
     //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test2.mp3"));
     m_mediaPlayList->setCurrentIndex(0);
 
@@ -416,6 +416,10 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     m_downloadProgressBar->show();
     //m_downloadProgressBar->raise();
     m_searchResult->hide();
+
+    //add music information to play list
+    m_showPlayList->addSong(index.data().toString());
+
     connect(m_reply,&QNetworkReply::finished,this,&MainWindow::urlRedirected);
     connect(m_reply,QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),          //异常
                 this,&MainWindow::doProcessError);
@@ -441,4 +445,5 @@ void MainWindow::urlRedirected()
 
 void MainWindow::doProcessError(QNetworkReply::NetworkError code) {
     qDebug() << code;
+
 }
