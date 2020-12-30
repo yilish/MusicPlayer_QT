@@ -25,6 +25,13 @@ public:
     explicit Down_PlayList(QWidget *parent = 0);
     QTableView *m_PlayList;
     QStandardItemModel *m_PlayListModel;
+    bool addSong(QString name)
+    {
+        int row=m_PlayListModel->rowCount();
+        qDebug()<<row<<"1111111111111111111";
+        m_PlayListModel->setItem(row, 0, new QStandardItem(name));
+        return true;
+    }
 };
 
 #endif // DOWN_PLAYLIST_H
