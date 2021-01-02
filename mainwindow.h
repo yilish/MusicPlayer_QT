@@ -49,6 +49,7 @@ private slots:
     void urlRedirected();
     void doProcessError(QNetworkReply::NetworkError code);
     void lyricRead();
+    //void clickSongFromPlayList(const QModelIndex &);
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
