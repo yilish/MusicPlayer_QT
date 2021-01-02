@@ -48,6 +48,7 @@ private slots:
     void downloadSelectedSong(const QModelIndex &index);
     void urlRedirected();
     void doProcessError(QNetworkReply::NetworkError code);
+    void lyricRead();
     //void clickSongFromPlayList(const QModelIndex &);
 private:
     void setDownWidget(QWidget* widget);
@@ -71,6 +72,9 @@ private:
     QNetworkAccessManager* m_accessManager;
     QNetworkRequest m_request;
     QNetworkReply* m_reply;
+    QNetworkReply* m_lyricReply;
+    QFile* m_lyricFile;
+    QString m_curSongName;
     QNetworkAccessManager* m_redirAccMgr;
     QNetworkRequest m_redirectedRequest;
     QNetworkReply* m_redirectedReply;
