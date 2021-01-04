@@ -19,4 +19,13 @@ void Middle_searchResult::setList(QStringList *strList)
 
     this->setModel(this->m_itemModel);
     this->setFixedSize(360, 500);
+
+    //QPalette pal;
+
+//    pal.setColor(QPalette::Background, QColor(54, 54, 54));
+
+//    this->setPalette(pal);
+
+    this->setStyleSheet("background-color: #303030");
+
 }
