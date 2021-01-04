@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     m_downPlayWidget = new Down_PlayWidget(m_downWidget);
-    m_downPlayWidget->setGeometry(0,0,250,70);
+    m_downPlayWidget->setGeometry(0,0,1300,70);
     m_downVoiceWidget = new Down_VoiceWidget(m_downWidget);
     m_downVoiceWidget->setGeometry(940, 0, 180, 70);
 
@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_mediaPlayer->setPlaylist(m_mediaPlayList);
     m_mediaPlayer->setVolume(30);
     m_unMutedVol = 30;
-
+    m_playMode = 0;
     //播放进度条初始化
 
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
@@ -90,8 +90,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
+
+    connect(m_downPlayWidget->m_btnPlayMode, SIGNAL(clicked()), this, SLOT(playmodeChanged()));
+
+
     connect(m_downVoiceWidget->m_btnMute, SIGNAL(clicked(bool)), this, SLOT(mute()));
     connect(m_downVoiceWidget->m_sliderVol, SIGNAL(valueChanged(int)), this, SLOT(changeVolVal(int)));
+
+
     connect(m_mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(onPositionChanged(qint64)));
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(onDurationChanged(qint64)));
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
@@ -100,6 +106,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
 
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
+
+
 }
 
 MainWindow::~MainWindow() {
@@ -474,4 +482,30 @@ void MainWindow::doProcessError(QNetworkReply::NetworkError code) {
 void MainWindow::lyricRead() {
     m_lyricFile->write(m_lyricReply->readAll());
     qDebug() << "lyric loaded.";
+}
+
+void MainWindow::playmodeChanged() {
+    m_playMode = (m_playMode + 1) % 3;
+    qDebug() << m_playMode;
+    if (m_playMode == 0) {
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Sequential);
+
+        m_downPlayWidget->m_btnPlayMode->setToolTip("顺序播放");
+        m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem2.png)}");
+        m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 25, 30, 20);
+    }
+
+    else if (m_playMode == 1) {
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Random);
+        m_downPlayWidget->m_btnPlayMode->setToolTip("随机播放");
+        m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem1.png)}");
+        m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 25, 30, 20);
+    }
+
+    else if (m_playMode == 2) {
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
+        m_downPlayWidget->m_btnPlayMode->setToolTip("单曲循环");
+        m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem3.png)}");
+        m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 20, 35, 35);
+    }
 }

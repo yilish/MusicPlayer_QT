@@ -18,6 +18,7 @@ public:
     QPushButton* m_btnPlay;
     QPushButton* m_btnPrevSong;
     QPushButton* m_btnNextSong;
+    QPushButton* m_btnPlayMode;
     QMediaPlayer* m_mediaPlayer;
     //QLayout* m_horizonalLayout;
 };

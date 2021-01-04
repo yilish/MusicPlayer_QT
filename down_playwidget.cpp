@@ -32,6 +32,13 @@ Down_PlayWidget::Down_PlayWidget(QWidget *parent) :QWidget(parent) {
                                   QPushButton:hover{border-image:url(:/images/images/next_pressed.png)}");
 
 
+    m_btnPlayMode = new QPushButton(this);
+    m_btnPlayMode->setCursor(Qt::PointingHandCursor);   //设置指针
+    m_btnPlayMode->setToolTip("顺序播放");                 //设置鼠标悬停提示
+    m_btnPlayMode->setGeometry(1120, 25, 30, 20);
+    m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem2.png)}");
+
+
 }
 
 void Down_PlayWidget::setMediaPlayer(QMediaPlayer* m) {
