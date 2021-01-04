@@ -74,6 +74,7 @@ private:
     QNetworkReply* m_reply;
     QNetworkReply* m_lyricReply;
     QFile* m_lyricFile;
+    QFile* m_albumFile;
     QString m_curSongName;
     QNetworkAccessManager* m_redirAccMgr;
     QNetworkRequest m_redirectedRequest;
