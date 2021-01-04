@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(onDurationChanged(qint64)));
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
-
+    connect(m_showPlayList->m_PlayList, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(playChange()));
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
 
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
@@ -359,6 +359,7 @@ void MainWindow::httpFinished() {
             m_showPlayList->addSong(name);
             QString songdir = m_database.querySong(name);
             m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+            //m_mediaPlayer->play();
         }
         //m_showPlayList->addSong(m_curSongName);
         disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
@@ -527,4 +528,15 @@ void MainWindow::playmodeChanged() {
         m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem3.png)}");
         m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 20, 35, 35);
     }
+}
+
+void MainWindow::playChange()
+{
+    int row = m_showPlayList->m_PlayList->currentIndex().row();
+    QModelIndex index = m_showPlayList->m_PlayListModel->index(row,0);
+    QString name = m_showPlayList->m_PlayListModel->data(index).toString();
+    QString songdir = m_database.querySong(name);
+    m_mediaPlayList->clear();
+    m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+    //m_mediaPlayer->play();
 }

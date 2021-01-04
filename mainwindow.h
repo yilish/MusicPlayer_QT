@@ -50,6 +50,7 @@ private slots:
     void doProcessError(QNetworkReply::NetworkError code);
     void lyricRead();
     void playmodeChanged();
+    void playChange();
     //void clickSongFromPlayList(const QModelIndex &);
 private:
     void setDownWidget(QWidget* widget);
