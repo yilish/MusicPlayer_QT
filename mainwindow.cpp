@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     m_downPlayWidget = new Down_PlayWidget(m_downWidget);
-    m_downPlayWidget->setGeometry(0,0,250,70);
+    m_downPlayWidget->setGeometry(0,0,1300,70);
     m_downVoiceWidget = new Down_VoiceWidget(m_downWidget);
     m_downVoiceWidget->setGeometry(940, 0, 180, 70);
 
@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_mediaPlayer->setPlaylist(m_mediaPlayList);
     m_mediaPlayer->setVolume(30);
     m_unMutedVol = 30;
-
+    m_playMode = 0;
     //播放进度条初始化
 
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
@@ -90,8 +90,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
+
+    connect(m_downPlayWidget->m_btnPlayMode, SIGNAL(clicked()), this, SLOT(playmodeChanged()));
+
+
     connect(m_downVoiceWidget->m_btnMute, SIGNAL(clicked(bool)), this, SLOT(mute()));
     connect(m_downVoiceWidget->m_sliderVol, SIGNAL(valueChanged(int)), this, SLOT(changeVolVal(int)));
+
+
     connect(m_mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(onPositionChanged(qint64)));
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(onDurationChanged(qint64)));
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
@@ -100,6 +106,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
 
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
+
+
 }
 
 MainWindow::~MainWindow() {
@@ -370,7 +378,7 @@ void MainWindow::httpFinished() {
 void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     auto objSong = m_songArr[index.row()].toObject();
     //qDebug() << objSong.value("img1v1Url").toString();
-    qDebug() << objSong;
+    //qDebug() << objSong;
     auto strId = getSongId(objSong);
     id = strId;
     songName = objSong["name"].toString();
@@ -436,17 +444,33 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
         ts << strLyric << endl;
         m_lyricFile->close();
     }
+
+    auto albumLink = QString("https://api.paugram.com/netease/?id=" + strId);
+    req.setUrl(albumLink);
+    m_albumReply = acMgr->get(req);
+    QEventLoop albumLoop;
+    connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    QByteArray albumArray = m_albumReply->readAll();
+
+    QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
+    auto albumObj = albumJson.object();
+    qDebug() << albumObj;
+    auto coverLink = albumObj.value("cover").toString();
+    qDebug() << coverLink;
+    req.setUrl(coverLink);
+    m_albumReply = acMgr->get(req);
+    connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
     auto albumPath = QApplication::applicationDirPath() + QString("/album/") ;
-    auto albumName = lyricPath + m_curSongName + ".jpg";
+    auto albumName = albumPath + m_curSongName + ".jpg";
     m_albumFile = new QFile(albumName);
     createFolder(albumPath);
-    if (m_albumFile->open(QIODevice::WriteOnly|QIODevice::Text)) {
-        //m_lyricFile->write(array);
-
-
-        QTextStream ts(m_albumFile);
-        //ts << strLyric << endl;
+    if (m_albumFile->open(QIODevice::WriteOnly)) {
+        m_albumFile->write( m_albumReply->readAll());
         m_albumFile->close();
+        qDebug() << "successfully downloaded the album cover.";
     }
 }
 
@@ -474,4 +498,30 @@ void MainWindow::doProcessError(QNetworkReply::NetworkError code) {
 void MainWindow::lyricRead() {
     m_lyricFile->write(m_lyricReply->readAll());
     qDebug() << "lyric loaded.";
+}
+
+void MainWindow::playmodeChanged() {
+    m_playMode = (m_playMode + 1) % 3;
+    qDebug() << m_playMode;
+    if (m_playMode == 0) {
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Sequential);
+
+        m_downPlayWidget->m_btnPlayMode->setToolTip("顺序播放");
+        m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem2.png)}");
+        m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 25, 30, 20);
+    }
+
+    else if (m_playMode == 1) {
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Random);
+        m_downPlayWidget->m_btnPlayMode->setToolTip("随机播放");
+        m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem1.png)}");
+        m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 25, 30, 20);
+    }
+
+    else if (m_playMode == 2) {
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
+        m_downPlayWidget->m_btnPlayMode->setToolTip("单曲循环");
+        m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem3.png)}");
+        m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 20, 35, 35);
+    }
 }
