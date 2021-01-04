@@ -368,11 +368,9 @@ void MainWindow::httpFinished() {
 }
 
 void MainWindow::downloadSelectedSong(const QModelIndex &index) {
-    qDebug() << index;
-    //qDebug() << index.row();
-
     auto objSong = m_songArr[index.row()].toObject();
-    //qDebug() << objSong;
+    //qDebug() << objSong.value("img1v1Url").toString();
+    qDebug() << objSong;
     auto strId = getSongId(objSong);
     id = strId;
     songName = objSong["name"].toString();
@@ -402,14 +400,12 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     m_searchResult->hide();
 
     //add music information to play list
-    //qDebug() << m_reply->error();
+
 
 
     connect(m_reply,&QNetworkReply::finished,this,&MainWindow::urlRedirected);
     connect(m_reply,QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),          //异常
                 this,&MainWindow::doProcessError);
-    //disconnect(m_reply,&QNetworkReply::finished,this,&MainWindow::firstFinished);
-
 
 
     //download lyrics.
@@ -418,7 +414,6 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     auto req =  QNetworkRequest();
     req.setUrl(lyricLink);
     m_lyricReply = acMgr->get(req);
-    //qDebug() << m_lyricReply;
     auto lyricPath = QApplication::applicationDirPath() + QString("/lyric/") ;
     auto lyricFileName = lyricPath + m_curSongName + ".txt";
     m_lyricFile = new QFile(lyricFileName);
@@ -429,7 +424,6 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     QEventLoop loop;
     connect (m_lyricReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
-    //qDebug() << m_lyricReply->readAll();
     QByteArray array = m_lyricReply->readAll();
     QJsonParseError jsonErr;
     QJsonDocument json = QJsonDocument::fromJson(array, &jsonErr);
@@ -442,8 +436,18 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
         ts << strLyric << endl;
         m_lyricFile->close();
     }
-    //json["lyric"];
-    //connect(m_lyricReply, &QNetworkReply::finished,this,&MainWindow::lyricRead);
+    auto albumPath = QApplication::applicationDirPath() + QString("/album/") ;
+    auto albumName = lyricPath + m_curSongName + ".jpg";
+    m_albumFile = new QFile(albumName);
+    createFolder(albumPath);
+    if (m_albumFile->open(QIODevice::WriteOnly|QIODevice::Text)) {
+        //m_lyricFile->write(array);
+
+
+        QTextStream ts(m_albumFile);
+        //ts << strLyric << endl;
+        m_albumFile->close();
+    }
 }
 
 void MainWindow::urlRedirected() {
