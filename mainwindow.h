@@ -92,6 +92,7 @@ private:
     QString artistName; //store downloading song's artist
     QString id; //store the id of downloading song
     QString filePath;    //store the dir of downloaded song
+    QString albumName;  //store albumName image dir
     DataBase m_database;    //database that stores songs' information
                             //songname, artistname, song-artist, dir
     int m_unMutedVol;

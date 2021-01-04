@@ -353,9 +353,12 @@ void MainWindow::httpFinished() {
     m_downloadProgressBar->hide();
     //qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
     if (m_curFile->size() > 1000) {
-        if(m_database.insert(id, songName, artistName, filePath))
+        if(m_database.insert(id, songName, artistName, filePath, albumName))
         {
-            m_showPlayList->addSong(songName + "-" + artistName);
+            QString name = songName + "-" + artistName;
+            m_showPlayList->addSong(name);
+            QString songdir = m_database.querySong(name);
+            m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
         }
         //m_showPlayList->addSong(m_curSongName);
         disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
@@ -464,7 +467,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     loop.exec();
 
     auto albumPath = QApplication::applicationDirPath() + QString("/album/") ;
-    auto albumName = albumPath + m_curSongName + ".jpg";
+    albumName = albumPath + m_curSongName + ".jpg";
     m_albumFile = new QFile(albumName);
     createFolder(albumPath);
     if (m_albumFile->open(QIODevice::WriteOnly)) {
