@@ -14,7 +14,7 @@
 #include <QNetworkAccessManager>
 #include <QStringList>
 #include "left_table.h"
-
+#include "database.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -85,7 +85,12 @@ private:
     QJsonArray m_songArr;
     QFile* m_curFile;
     Left_Table* m_leftTable;
-
+    QString songName;   //store downloading song's name
+    QString artistName; //store downloading song's artist
+    QString id; //store the id of downloading song
+    QString filePath;    //store the dir of downloaded song
+    DataBase m_database;    //database that stores songs' information
+                            //songname, artistname, song-artist, dir
     int m_unMutedVol;
 };
 #endif // MAINWINDOW_H

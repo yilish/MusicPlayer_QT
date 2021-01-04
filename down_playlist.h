@@ -28,7 +28,6 @@ public:
     bool addSong(QString name)
     {
         int row=m_PlayListModel->rowCount();
-        qDebug()<<row<<"1111111111111111111";
         m_PlayListModel->setItem(row, 0, new QStandardItem(name));
         return true;
     }

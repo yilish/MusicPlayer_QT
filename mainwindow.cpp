@@ -5,6 +5,12 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+
+    //初始化数据库
+    m_database.createConnection();
+    m_database.createTable();
+
+
     //UI设计
     //ui->setupUi(this);
     setMaximumSize(1300,800);
@@ -299,8 +305,9 @@ void MainWindow::searchSong() {
             for (int i = 0; i < m_songArr.size(); i++) {
                 auto objSong = m_songArr[i].toObject();
                 auto id = getSongId(objSong);
+                auto songName = objSong["name"].toString();
                 auto artistName = getArtistName(objSong);
-                strList.push_back(artistName + '-' + objSong["name"].toString());
+                strList.push_back(artistName + '-' + songName);
                // qDebug() << objSong["name"].toString() << artistName;
             }
 
@@ -338,7 +345,11 @@ void MainWindow::httpFinished() {
     m_downloadProgressBar->hide();
     //qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
     if (m_curFile->size() > 1000) {
-        m_showPlayList->addSong(m_curSongName);
+        if(m_database.insert(id, songName, artistName, filePath))
+        {
+            m_showPlayList->addSong(songName + "-" + artistName);
+        }
+        //m_showPlayList->addSong(m_curSongName);
         disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
         disconnect(m_redirectedReply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
         disconnect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
@@ -361,13 +372,15 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     //qDebug() << objSong.value("img1v1Url").toString();
     qDebug() << objSong;
     auto strId = getSongId(objSong);
-
+    id = strId;
+    songName = objSong["name"].toString();
+    artistName = getArtistName(objSong);
     qDebug() << strId;
     auto absPath = QApplication::applicationDirPath();
     auto dir = QApplication::applicationDirPath() + QString("/music/");
     createFolder(dir);
     m_curSongName = index.data().toString();
-    auto filePath = dir + m_curSongName + ".mp3";
+    filePath = dir + m_curSongName + ".mp3";
     //qDebug() << "FilePath:" << filePath;
     m_curFile = new QFile(filePath);
     m_curFile->open(QIODevice::WriteOnly);
