@@ -74,6 +74,8 @@ private:
     QNetworkRequest m_request;
     QNetworkReply* m_reply;
     QNetworkReply* m_lyricReply;
+    QNetworkReply* m_albumReply;
+
     QFile* m_lyricFile;
     QFile* m_albumFile;
     QString m_curSongName;

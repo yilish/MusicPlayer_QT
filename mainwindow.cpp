@@ -378,7 +378,7 @@ void MainWindow::httpFinished() {
 void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     auto objSong = m_songArr[index.row()].toObject();
     //qDebug() << objSong.value("img1v1Url").toString();
-    qDebug() << objSong;
+    //qDebug() << objSong;
     auto strId = getSongId(objSong);
     id = strId;
     songName = objSong["name"].toString();
@@ -444,17 +444,33 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
         ts << strLyric << endl;
         m_lyricFile->close();
     }
+
+    auto albumLink = QString("https://api.paugram.com/netease/?id=" + strId);
+    req.setUrl(albumLink);
+    m_albumReply = acMgr->get(req);
+    QEventLoop albumLoop;
+    connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    QByteArray albumArray = m_albumReply->readAll();
+
+    QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
+    auto albumObj = albumJson.object();
+    qDebug() << albumObj;
+    auto coverLink = albumObj.value("cover").toString();
+    qDebug() << coverLink;
+    req.setUrl(coverLink);
+    m_albumReply = acMgr->get(req);
+    connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
     auto albumPath = QApplication::applicationDirPath() + QString("/album/") ;
-    auto albumName = lyricPath + m_curSongName + ".jpg";
+    auto albumName = albumPath + m_curSongName + ".jpg";
     m_albumFile = new QFile(albumName);
     createFolder(albumPath);
-    if (m_albumFile->open(QIODevice::WriteOnly|QIODevice::Text)) {
-        //m_lyricFile->write(array);
-
-
-        QTextStream ts(m_albumFile);
-        //ts << strLyric << endl;
+    if (m_albumFile->open(QIODevice::WriteOnly)) {
+        m_albumFile->write( m_albumReply->readAll());
         m_albumFile->close();
+        qDebug() << "successfully downloaded the album cover.";
     }
 }
 
