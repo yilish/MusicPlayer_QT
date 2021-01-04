@@ -275,6 +275,22 @@ QString MainWindow::getArtistName(QJsonObject obj) {
     return strArtistName;
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *e) {
+    qDebug() << m_searchResult->pos();
+    if (!isInRange(e->pos(), m_searchResult)
+       &&!isInRange(e->pos(), m_topSearchWidget)) {
+        m_searchResult->hide();
+    }
+}
+
+bool MainWindow::isInRange(QPoint p, QWidget *widget) {
+    if (p.x() <= widget->pos().x() + widget->width() && p.x() >= widget->pos().x()
+      &&p.y() <= widget->pos().y() + widget->height() && p.y() >= widget->pos().y()) {
+        return true;
+    }
+    return false;
+}
+
 void MainWindow::showPlayList() {
 
     if(!m_showPlayList->isVisible()) {

@@ -58,6 +58,14 @@ private:
     void createFolder(QString folder);
     QString getSongId(QJsonObject obj);
     QString getArtistName(QJsonObject obj);
+    void mousePressEvent(QMouseEvent *e);
+    bool isInRange(QPoint p,QWidget* widget);
+
+
+
+
+
+
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
     QWidget* m_topWidget;
