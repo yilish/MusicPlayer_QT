@@ -27,6 +27,8 @@ SOURCES += \
     left_musicbutton.cpp \
     left_musicshowwidget.cpp \
     left_table.cpp \
+    lyricloader.cpp \
+    lyricwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     middle_musicshow.cpp \
@@ -46,6 +48,8 @@ HEADERS += \
     left_musicbutton.h \
     left_musicshowwidget.h \
     left_table.h \
+    lyricloader.h \
+    lyricwindow.h \
     mainwindow.h \
     middle_musicshow.h \
     middle_searchresult.h \
