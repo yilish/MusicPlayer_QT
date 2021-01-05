@@ -34,15 +34,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //左侧菜单初始化
-    m_leftTable = new Left_Table(this);
-    m_leftTable->setGeometry(0, 0, 300, 730);
-
+    m_leftWidget = new QWidget(this);
+    setLeftWidget();
+    //m_leftTable = new Left_Table(this);
+    //m_leftTable->setGeometry(0, 0, 300, 730);
+    m_leftBtnFullScreen = new Left_MusicButton(m_leftWidget);
+    m_leftBtnFullScreen->setGeometry(0,597,250,64);
+    connect(m_leftBtnFullScreen,SIGNAL(clicked(bool)),this,SLOT(showMusicWidget()));
 
     m_downPlayWidget = new Down_PlayWidget(m_downWidget);
     m_downPlayWidget->setGeometry(0,0,1300,70);
     m_downVoiceWidget = new Down_VoiceWidget(m_downWidget);
     m_downVoiceWidget->setGeometry(940, 0, 180, 70);
 
+    m_leftMusicShowWidget = new Left_musicShowWidget(this);
+    m_leftMusicShowWidget->setGeometry(0,730,0,0);
 
     //上边框初始化
     m_topWidget = new QWidget(this);
@@ -53,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
     //起始位置: 315, 65
     //大小: 360, (500)?
     m_middleMusicShow = new Middle_musicShow(this);
+    m_middleMusicShow->lower();
     m_middleMusicShow->setGeometry(250,69,1050,661);
 
     //歌词窗体QLabel
@@ -270,6 +277,17 @@ void MainWindow::setTopWidget(QWidget *widget) {
     widget->show();
 }
 
+
+void MainWindow::setLeftWidget()
+{
+    m_leftWidget->setGeometry(0,69,250,661);
+    QPalette pal(m_leftWidget->palette());
+    pal.setColor(QPalette::Background,QColor(52,53,44));
+    m_leftWidget->setAutoFillBackground(true);
+    m_leftWidget->setPalette(pal);
+    m_leftWidget->show();
+}
+
 void MainWindow::createFolder(QString folder) {
     QDir* newFolder = new QDir;
     bool exist = newFolder->exists(folder);
@@ -364,6 +382,16 @@ void MainWindow::searchSong() {
             // ToDo: 下载完成后加入自动扫描到歌单的功能
         }
     }
+
+}
+
+void MainWindow::showMusicWidget() {
+    m_leftMusicShowWidget->show();
+    QPropertyAnimation *animation=new QPropertyAnimation(m_leftMusicShowWidget,"geometry");
+    animation->setDuration(300);
+    animation->setStartValue(QRect(0,730,1300,0));
+    animation->setEndValue(QRect(0,69,1300,661));
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 
 }
 
@@ -485,6 +513,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
         QString strLyric = obj["lyric"].toString();
         QTextStream ts(m_lyricFile);
+        ts.setCodec("utf-8");
         ts << strLyric << endl;
         m_lyricFile->close();
     }

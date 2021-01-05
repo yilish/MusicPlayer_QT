@@ -1,15 +1,27 @@
 #include "middle_searchresult.h"
 
-Middle_searchResult::Middle_searchResult(QWidget *parent)
-{
+Middle_searchResult::Middle_searchResult(QWidget *parent) {
     setParent(parent);
     m_itemModel = new QStandardItemModel(this);
-    this->setStyleSheet("background-color: #303030");
+
+    QFile* qssFile = new QFile((":/qss/searchListStyle.qss"));
+
+    QSSParser parser(qssFile);
+    setStyle(new SearchBoxProxyStyle);
+    this->setStyleSheet(parser.getStyleSheet());
     QPalette pal = palette();
-    pal.setColor(QPalette::Background, QColor(255,0,0,200));
-    setPalette(pal);
-    this->setFixedSize(360, 400);
+    //pal.setColor(QPalette::Background, QColor(52,53,44,100));
+
+    this->setAutoFillBackground(true);
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setPalette(pal);
+    //setAttribute(Qt::WA_TranslucentBackground);
+    this->setFixedSize(360, 360);
+    //this->reset();
+    setFrameShape(QFrame::NoFrame);
 }
+
+
 
 void Middle_searchResult::setList(QStringList *strList)
 {
@@ -20,6 +32,7 @@ void Middle_searchResult::setList(QStringList *strList)
         QStandardItem *item = new QStandardItem(string);
         //item->setFont(QFont( "Times", 10, qRgb(214, 214, 214) ));
         item->setForeground(QBrush(QColor(214, 214, 214)));
+
         m_itemModel->appendRow(item);
     }
 

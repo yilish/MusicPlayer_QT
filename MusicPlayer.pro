@@ -24,6 +24,8 @@ SOURCES += \
     down_playprogressbar.cpp \
     down_playwidget.cpp \
     down_voicewidget.cpp \
+    left_musicbutton.cpp \
+    left_musicshowwidget.cpp \
     left_table.cpp \
     lyricloader.cpp \
     lyricwindow.cpp \
@@ -33,6 +35,7 @@ SOURCES += \
     middle_searchresult.cpp \
     myslider.cpp \
     qssparser.cpp \
+    searchboxproxystyle.cpp \
     top_searchwidget.cpp
 
 HEADERS += \
@@ -42,6 +45,8 @@ HEADERS += \
     down_playprogressbar.h \
     down_playwidget.h \
     down_voicewidget.h \
+    left_musicbutton.h \
+    left_musicshowwidget.h \
     left_table.h \
     lyricloader.h \
     lyricwindow.h \
@@ -50,6 +55,7 @@ HEADERS += \
     middle_searchresult.h \
     myslider.h \
     qssparser.h \
+    searchboxproxystyle.h \
     top_searchwidget.h
 
 FORMS += \

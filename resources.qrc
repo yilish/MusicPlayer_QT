@@ -70,6 +70,8 @@
         <file>images/xin_normal.png</file>
         <file>images/xin_pressed.png</file>
         <file>images/redDot.png</file>
+        <file>images/desk.jpg</file>
+        <file>images/hw.jpg</file>
     </qresource>
     <qresource prefix="/qss">
         <file>sliderVolStyle.qss</file>
