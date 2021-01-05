@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QTimerEvent>
 #include <QTimer>
-
+#include <QDebug>
 LyricWindow::LyricWindow(QWidget *parent, Qt::WindowFlags f) :
     QLabel(parent,f)
 {
@@ -15,6 +15,7 @@ void LyricWindow::setText(const QString &curText)
 {
     if (text() != curText) {
         QLabel::setText(curText);
+        //qDebug() << curText<< "676666666666666666";
         emit currentTextChanged();
     }
 }
@@ -22,7 +23,7 @@ void LyricWindow::setText(const QString &curText)
 // 开始启动定时器 设为 50
 void LyricWindow::startScroll()
 {
-   timerID = startTimer(50);
+   timerID = startTimer(5);
 }
 
 
@@ -44,11 +45,13 @@ int LyricWindow::getHeight()
 {
     #define MARGIN  5
 
-    char newMsg[1024] ={0};
-    char *message = text().toLatin1().data();
-    int len = strlen(message);
-    char mss[len];
-    memcpy(mss,text().toLatin1().data(),len);
+    QString newMsg;
+    QString message = text().toUtf8().data();
+    qDebug() << message << "utf8";
+    int len = message.length();
+    QString mss;
+    mss = message;
+    //memcpy(mss,text().toLatin1().data(),len);
 
     int i;
     int row =1;

@@ -142,12 +142,12 @@ void MainWindow::updateMusicWidget() {
             QStringList m_lyricList = m_lyricLoader.lyric();
             for(int i = 0; i< m_lyricList.size();++i)
             {
-                QString tmp = m_lyricList.at(i);
-                qDebug() << tmp;
-                m_lyricWindow->setText(tmp);
+                //QString tmp = m_lyricList.at(i);
+                //qDebug() << tmp;
+                m_lyricWindow->setText(m_lyricList.at(i));
             }
             m_lyricWindow->show();
-            m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,100,100);
+            m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
             m_mediaPlayer->play();
         }
     }
@@ -322,6 +322,10 @@ void MainWindow::mousePressEvent(QMouseEvent *e) {
     if (!isInRange(e->pos(), m_searchResult)
        &&!isInRange(e->pos(), m_topSearchWidget)) {
         m_searchResult->hide();
+    }
+
+    if (!isInRange(e->pos(), m_showPlayList)) {
+        m_showPlayList->hide();
     }
 }
 
@@ -513,7 +517,8 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
         QString strLyric = obj["lyric"].toString();
         QTextStream ts(m_lyricFile);
-        ts.setCodec("utf-8");
+
+        ts.setCodec("unicode");
         ts << strLyric << endl;
         m_lyricFile->close();
     }
@@ -528,6 +533,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
     QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
     auto albumObj = albumJson.object();
+    qDebug() << albumObj.value("album").toString();
     auto coverLink = albumObj.value("cover").toString();
     req.setUrl(coverLink);
     m_albumReply = acMgr->get(req);
