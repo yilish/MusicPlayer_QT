@@ -51,6 +51,10 @@ MainWindow::MainWindow(QWidget *parent)
     //搜索栏初始化
     //起始位置: 315, 65
     //大小: 360, (500)?
+    m_middleMusicShow = new Middle_musicShow(this);
+    m_middleMusicShow->setGeometry(250,69,1050,661);
+
+
     m_searchResult = new Middle_searchResult(this);
     m_searchResult->setGeometry(348, 65, 330, 500);
     m_searchResult->setEditTriggers(QAbstractItemView::NoEditTriggers);//设置不可更改里面的内容
@@ -275,6 +279,22 @@ QString MainWindow::getArtistName(QJsonObject obj) {
     return strArtistName;
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *e) {
+   // qDebug() << m_searchResult->pos();
+    if (!isInRange(e->pos(), m_searchResult)
+       &&!isInRange(e->pos(), m_topSearchWidget)) {
+        m_searchResult->hide();
+    }
+}
+
+bool MainWindow::isInRange(QPoint p, QWidget *widget) {
+    if (p.x() <= widget->pos().x() + widget->width() && p.x() >= widget->pos().x()
+      &&p.y() <= widget->pos().y() + widget->height() && p.y() >= widget->pos().y()) {
+        return true;
+    }
+    return false;
+}
+
 void MainWindow::showPlayList() {
 
     if(!m_showPlayList->isVisible()) {
@@ -378,6 +398,7 @@ void MainWindow::httpFinished() {
 }
 
 void MainWindow::downloadSelectedSong(const QModelIndex &index) {
+    //这坨代码写的太屎了。。
     auto objSong = m_songArr[index.row()].toObject();
     //qDebug() << objSong.value("img1v1Url").toString();
     //qDebug() << objSong;
@@ -457,9 +478,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
     QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
     auto albumObj = albumJson.object();
-    qDebug() << albumObj;
     auto coverLink = albumObj.value("cover").toString();
-    qDebug() << coverLink;
     req.setUrl(coverLink);
     m_albumReply = acMgr->get(req);
     connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);

@@ -15,6 +15,8 @@
 #include <QStringList>
 #include "left_table.h"
 #include "database.h"
+#include "middle_musicshow.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -59,6 +61,14 @@ private:
     void createFolder(QString folder);
     QString getSongId(QJsonObject obj);
     QString getArtistName(QJsonObject obj);
+    void mousePressEvent(QMouseEvent *e);
+    bool isInRange(QPoint p,QWidget* widget);
+
+
+
+
+
+
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
     QWidget* m_topWidget;
@@ -71,6 +81,10 @@ private:
     Down_PlayProgressBar* m_downProgressBar;
     Down_PlayListButton* m_downBtnPlayList;   //播放列表按钮
     Down_PlayList* m_showPlayList;  //显示播放列表
+    Middle_musicShow* m_middleMusicShow;
+
+
+
     QNetworkAccessManager* m_accessManager;
     QNetworkRequest m_request;
     QNetworkReply* m_reply;
