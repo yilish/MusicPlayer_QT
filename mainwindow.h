@@ -16,6 +16,8 @@
 #include "left_table.h"
 #include "database.h"
 #include "middle_musicshow.h"
+#include "lyricloader.h"
+#include "lyricwindow.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -108,9 +110,12 @@ private:
     QString id; //store the id of downloading song
     QString filePath;    //store the dir of downloaded song
     QString albumName;  //store albumName image dir
+    QString lyricFileName;
     DataBase m_database;    //database that stores songs' information
                             //songname, artistname, song-artist, dir
     int m_unMutedVol;
     int m_playMode;
+    LyricLoader m_lyricLoader;
+    LyricWindow* m_lyricWindow;
 };
 #endif // MAINWINDOW_H

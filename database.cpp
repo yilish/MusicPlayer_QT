@@ -16,20 +16,6 @@ bool DataBase::createConnection()
         database.setUserName("admin");
         database.setPassword("123456");
     }
-    /*
-    QSqlDatabase db;
-    if (QSqlDatabase::contains("qt_sql_default_connection")) //判断是否存在这个连接
-    {
-        db = QSqlDatabase::database("qt_sql_default_connection");
-    }
-    else
-    {
-        db = QSqlDatabase::addDatabase("QSQLITE"); //是SQLite对应的驱动名，不能改 第二个参数被省略了，
-    }
-    //以后就可以用"sqlite1"与数据库进行连接了
-    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("songlist");
-    */
     if(!database.open())
     {
         qDebug() << "connect failed.";
@@ -45,7 +31,7 @@ bool DataBase::createTable()
     QSqlDatabase db = QSqlDatabase::database("QSQLITE");
     QSqlQuery sql_query(db);
     QString create_sql = "create table songlist(id varchar primary key,songname varchar,"
-                         "artistname varchar,songartist varchar,songdir varchar,imagedir varchar)";
+                         "artistname varchar,songartist varchar,songdir varchar,imagedir varchar,lyrdir varchar)";
     //sql_query.prepare();
     if(!sql_query.exec(create_sql))
     {
@@ -55,36 +41,22 @@ bool DataBase::createTable()
     {
         qDebug() << "Table created!";
     }
-    /*
-    QSqlDatabase db = QSqlDatabase::database("QSQLITE"); //建立数据库连接
-    QSqlQuery query(db);
-    bool success = query.exec("create table songlist(id varchar primary key,songname varchar,artistname varchar,song-artist varchar,dir varchar)");
-    if(success)
-    {
-        qDebug() << QObject::tr("database created.");
-        return true;
-    }
-    else
-    {
-        qDebug() << QObject::tr("database create failed.");
-        return false;
-    }
-    */
 }
 
 //向数据库中插入记录
-bool DataBase::insert(QString id, QString songname, QString artistname, QString songdir, QString imagedir)
+bool DataBase::insert(QString id, QString songname, QString artistname, QString songdir, QString imagedir, QString lyrdir)
 {
     QSqlDatabase db = QSqlDatabase::database("QSQLITE"); //建立数据库连接
     QSqlQuery query(db);
-    query.prepare("INSERT INTO songlist (id,songname,artistname,songartist,songdir,imagedir)"
-                      "VALUES (:id,:songname,:artistname,:songartist,:songdir,:imagedir)");
+    query.prepare("INSERT INTO songlist (id,songname,artistname,songartist,songdir,imagedir,lyrdir)"
+                      "VALUES (:id,:songname,:artistname,:songartist,:songdir,:imagedir,:lyrdir)");
     query.bindValue(":id", id);
     query.bindValue(":songname", songname);
     query.bindValue(":artistname", artistname);
     query.bindValue(":songartist", songname + "-" + artistname);
     query.bindValue(":songdir", songdir);
     query.bindValue(":imagedir", imagedir);
+    query.bindValue(":lyrdir", lyrdir);
     if(!query.exec())
     {
         QSqlError lastError = query.lastError();
@@ -127,7 +99,22 @@ QString DataBase::queryImage(QString name)
     }
 }
 
-
+QString DataBase::queryLyr(QString name)
+{
+    QSqlDatabase db = QSqlDatabase::database("QSQLITE"); //建立数据库连接
+    QSqlQuery query(db);
+    query.prepare(QString("select lyrdir from songlist where songartist = '%1'").arg(name));
+    if(!query.exec())
+    {
+        qDebug() << "lyrics not found";
+        return "";
+    }
+    if(query.first())
+    {
+        //qDebug() << query.value(0).toString();
+        return query.value(0).toString();
+    }
+}
 //查询所有信息
 bool DataBase::queryAll()
 {

@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_database.createTable();
 
 
+
     //UI设计
     //ui->setupUi(this);
     setMaximumSize(1300,800);
@@ -53,6 +54,15 @@ MainWindow::MainWindow(QWidget *parent)
     //大小: 360, (500)?
     m_middleMusicShow = new Middle_musicShow(this);
     m_middleMusicShow->setGeometry(250,69,1050,661);
+
+    //歌词窗体QLabel
+    m_lyricWindow = new LyricWindow(this);
+    QFont ft;
+    ft.setPointSize(12);
+    QPalette pa;
+    pa.setColor(QPalette::WindowText,Qt::red);
+    m_lyricWindow->setFont(ft);
+    m_lyricWindow->setPalette(pa);
 
 
     m_searchResult = new Middle_searchResult(this);
@@ -122,11 +132,21 @@ void MainWindow::updateMusicWidget() {
     if (m_downPlayWidget->m_btnPlay->isChecked()) {
         //播放列表空否？
         if (!m_mediaPlayList->isEmpty()) {
+            QStringList m_lyricList = m_lyricLoader.lyric();
+            for(int i = 0; i< m_lyricList.size();++i)
+            {
+                QString tmp = m_lyricList.at(i);
+                qDebug() << tmp;
+                m_lyricWindow->setText(tmp);
+            }
+            m_lyricWindow->show();
+            m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,100,100);
             m_mediaPlayer->play();
         }
     }
 
     else {
+        m_lyricWindow->hide();
         m_mediaPlayer->pause();
     }
 
@@ -373,11 +393,12 @@ void MainWindow::httpFinished() {
     m_downloadProgressBar->hide();
     //qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
     if (m_curFile->size() > 1000) {
-        if(m_database.insert(id, songName, artistName, filePath, albumName))
+        if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName))
         {
             QString name = songName + "-" + artistName;
             m_showPlayList->addSong(name);
             QString songdir = m_database.querySong(name);
+            m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
 
         }
         disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
@@ -446,7 +467,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     req.setUrl(lyricLink);
     m_lyricReply = acMgr->get(req);
     auto lyricPath = QApplication::applicationDirPath() + QString("/lyric/") ;
-    auto lyricFileName = lyricPath + m_curSongName + ".txt";
+    lyricFileName = lyricPath + m_curSongName + ".txt";
     m_lyricFile = new QFile(lyricFileName);
     createFolder(lyricPath);
 
@@ -553,7 +574,10 @@ void MainWindow::playChange()
     QModelIndex index = m_showPlayList->m_PlayListModel->index(row,0);
     QString name = m_showPlayList->m_PlayListModel->data(index).toString();
     QString songdir = m_database.querySong(name);
+    QString lyrdir = m_database.queryLyr(name);
     m_mediaPlayList->clear();
     m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+    qDebug() << m_lyricLoader.loadFromFile(lyrdir);
+
     //m_mediaPlayer->play();
 }
