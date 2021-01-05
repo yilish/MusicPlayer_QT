@@ -66,16 +66,19 @@
         <file>images/voice_unclicked.png</file>
         <file>images/wangyi.ico</file>
         <file>images/wangyimini.png</file>
-        <file>images/wangyiyunicon .png</file>
         <file>images/xin_normal.png</file>
         <file>images/xin_pressed.png</file>
         <file>images/redDot.png</file>
         <file>images/desk.jpg</file>
         <file>images/hw.jpg</file>
+        <file>images/greybgc.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>sliderVolStyle.qss</file>
         <file>lineSearchStyle.qss</file>
         <file>searchListStyle.qss</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>images/greybgc.png</file>
     </qresource>
 </RCC>

@@ -63,7 +63,7 @@ private slots:
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
-
+    void createRedLine();
     void setLeftWidget();
     void createFolder(QString folder);
     QString getSongId(QJsonObject obj);
@@ -77,8 +77,12 @@ private:
 
 
     Ui::MainWindow *ui;
+    QLabel* m_lblLogo;
     QWidget* m_downWidget;
     QWidget* m_topWidget;
+    QWidget* m_redWidget;
+
+
     QWidget* m_leftWidget;
     QString m_tDuration;
     QString m_tPosition;

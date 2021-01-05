@@ -47,7 +47,7 @@ int LyricWindow::getHeight()
 
     QString newMsg;
     QString message = text().toUtf8().data();
-    qDebug() << message << "utf8";
+    //qDebug() << message << "utf8";
     int len = message.length();
     QString mss;
     mss = message;

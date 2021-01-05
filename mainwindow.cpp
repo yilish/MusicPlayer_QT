@@ -55,6 +55,14 @@ MainWindow::MainWindow(QWidget *parent)
     setTopWidget(m_topWidget);
     m_topSearchWidget = new Top_SearchWidget(m_topWidget);
     m_topSearchWidget->setGeometry(348, 20, 360, 48);
+
+    m_lblLogo = new QLabel(m_topWidget);
+    QPixmap pix("D:/DSproj/MusicPlayer/images/wangyiyunicon.png");
+    m_lblLogo->setPixmap(pix);
+    qDebug() << pix.width() << pix.height();
+    m_lblLogo->setGeometry(0,0,pix.width(),pix.height());
+    m_lblLogo->show();
+    m_lblLogo->raise();
     //搜索栏初始化
     //起始位置: 315, 65
     //大小: 360, (500)?
@@ -62,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_middleMusicShow->lower();
     m_middleMusicShow->setGeometry(250,69,1050,661);
 
+    createRedLine();
     //歌词窗体QLabel
     m_lyricWindow = new LyricWindow(this);
     QFont ft;
@@ -90,9 +99,6 @@ MainWindow::MainWindow(QWidget *parent)
     //init of play list
     m_mediaPlayList = new QMediaPlaylist(this);
     m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test2.mp3"));
     m_mediaPlayList->setCurrentIndex(0);
 
     //bind list with player
@@ -277,9 +283,19 @@ void MainWindow::setTopWidget(QWidget *widget) {
     widget->show();
 }
 
-
-void MainWindow::setLeftWidget()
+void MainWindow::createRedLine()
 {
+    m_redWidget = new QWidget(this);
+    m_redWidget->setGeometry(0,65,1300,4);
+    QPalette pal(m_redWidget->palette());
+    pal.setColor(QPalette::Background,QColor(177,34,34));
+    m_redWidget->setAutoFillBackground(true);
+    m_redWidget->setPalette(pal);
+    m_redWidget->show();
+}
+
+
+void MainWindow::setLeftWidget() {
     m_leftWidget->setGeometry(0,69,250,661);
     QPalette pal(m_leftWidget->palette());
     pal.setColor(QPalette::Background,QColor(52,53,44));
