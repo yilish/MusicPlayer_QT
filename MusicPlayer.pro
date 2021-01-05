@@ -27,6 +27,7 @@ SOURCES += \
     left_table.cpp \
     main.cpp \
     mainwindow.cpp \
+    middle_musicshow.cpp \
     middle_searchresult.cpp \
     myslider.cpp \
     qssparser.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     down_voicewidget.h \
     left_table.h \
     mainwindow.h \
+    middle_musicshow.h \
     middle_searchresult.h \
     myslider.h \
     qssparser.h \
