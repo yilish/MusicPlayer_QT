@@ -118,6 +118,7 @@ private:
     QString filePath;    //store the dir of downloaded song
     QString albumName;  //store albumName image dir
     QString lyricFileName;
+    QString coverLink;
     DataBase m_database;    //database that stores songs' information
                             //songname, artistname, song-artist, dir
     int m_unMutedVol;

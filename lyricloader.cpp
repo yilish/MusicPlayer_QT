@@ -141,7 +141,7 @@ bool LyricLoader::processContent(const QString &content)
             }
             // 步骤3
             QString text = content.mid(lastPos, pos - lastPos);
-            qDebug() << text << "123456";
+            //qDebug() << text << "123456";
             if (!text.isEmpty()) {
                 foreach (const int& time, timeLabels)
                     mLines.append(new LyricLine(time, text.trimmed()));

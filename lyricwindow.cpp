@@ -23,7 +23,7 @@ void LyricWindow::setText(const QString &curText)
 // 开始启动定时器 设为 50
 void LyricWindow::startScroll()
 {
-   timerID = startTimer(5);
+   timerID = startTimer(50);
 }
 
 
@@ -47,7 +47,7 @@ int LyricWindow::getHeight()
 
     QString newMsg;
     QString message = text().toUtf8().data();
-    qDebug() << message << "utf8";
+    //qDebug() << message << "utf8";
     int len = message.length();
     QString mss;
     mss = message;
@@ -63,7 +63,7 @@ int LyricWindow::getHeight()
     QFontMetrics fm = fontMetrics();
     int  h = 18;    // 这里指定我们想要的字体高度
 
-    printf("len  = %d\n",len);
+    //printf("len  = %d\n",len);
     for (i=0; i<len; i++) {
 
         font_width = fm.width(mss[i]);
@@ -90,11 +90,11 @@ int LyricWindow::getHeight()
 
     }
 
-    printf("row = %d\n",row);
+    //printf("row = %d\n",row);
 
     // 上面经过处理得到结果，查看下有多少行。
     // 设置到QLabel 上去
-      setText(newMsg);
+    setText(newMsg);
     // 返回 行*字体高度 + 这里我们加了10 的预留空间。
     return row*h+(MARGIN<<1);
 }
