@@ -303,6 +303,10 @@ void MainWindow::mousePressEvent(QMouseEvent *e) {
        &&!isInRange(e->pos(), m_topSearchWidget)) {
         m_searchResult->hide();
     }
+
+    if (!isInRange(e->pos(), m_showPlayList)) {
+        m_showPlayList->hide();
+    }
 }
 
 bool MainWindow::isInRange(QPoint p, QWidget *widget) {
@@ -509,6 +513,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
     QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
     auto albumObj = albumJson.object();
+    qDebug() << albumObj.value("album").toString();
     auto coverLink = albumObj.value("cover").toString();
     req.setUrl(coverLink);
     m_albumReply = acMgr->get(req);
