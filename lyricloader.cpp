@@ -33,8 +33,10 @@ bool LyricLoader::loadFromFile(const QString &fileName)
     QFile file(fileName);
     if (file.size() && file.open(QIODevice::ReadOnly)) {
         QTextStream stream(&file);
-        stream.setCodec("ANSI");
-        stream.setAutoDetectUnicode(true);
+
+        stream.setCodec("unicode");
+
+        //stream.setAutoDetectUnicode(true);
         return processContent(stream.readAll());
     }
     return false;
@@ -116,8 +118,11 @@ bool LyricLoader::processContent(const QString &content)
     int pos = rx.indexIn(content);
     if (pos == -1) {
         QStringList list = content.split('\n', QString::SkipEmptyParts);
+
         foreach (QString line, list)
+
             mLines.append(new LyricLine(0, line));
+
         mHasTimer = false;
     }
     else {
@@ -136,6 +141,7 @@ bool LyricLoader::processContent(const QString &content)
             }
             // 步骤3
             QString text = content.mid(lastPos, pos - lastPos);
+            qDebug() << text << "123456";
             if (!text.isEmpty()) {
                 foreach (const int& time, timeLabels)
                     mLines.append(new LyricLine(time, text.trimmed()));
