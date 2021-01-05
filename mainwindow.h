@@ -16,6 +16,8 @@
 #include "left_table.h"
 #include "database.h"
 #include "middle_musicshow.h"
+#include "left_musicshowwidget.h"
+#include "left_musicbutton.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -42,6 +44,8 @@ private slots:
     void onPositionChanged(qint64 position);
     void showPlayList();
     void searchSong();
+
+    void showMusicWidget();
     //void updateDownloadProgress(qint64 bytesRead,qint64 totalBytes);
     void firstFinished();
     void httpReadyRead();
@@ -57,7 +61,8 @@ private slots:
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
-    void setLeftWidget(QWidget* widget);
+
+    void setLeftWidget();
     void createFolder(QString folder);
     QString getSongId(QJsonObject obj);
     QString getArtistName(QJsonObject obj);
@@ -72,6 +77,7 @@ private:
     Ui::MainWindow *ui;
     QWidget* m_downWidget;
     QWidget* m_topWidget;
+    QWidget* m_leftWidget;
     QString m_tDuration;
     QString m_tPosition;
     QMediaPlayer* m_mediaPlayer;
@@ -82,7 +88,8 @@ private:
     Down_PlayListButton* m_downBtnPlayList;   //播放列表按钮
     Down_PlayList* m_showPlayList;  //显示播放列表
     Middle_musicShow* m_middleMusicShow;
-
+    Left_musicShowWidget* m_leftMusicShowWidget;
+    Left_MusicButton* m_leftBtnFullScreen;
 
 
     QNetworkAccessManager* m_accessManager;

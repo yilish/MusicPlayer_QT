@@ -2,8 +2,7 @@
 
 
 
-Middle_musicShow::Middle_musicShow(QWidget *parent)
-{
+Middle_musicShow::Middle_musicShow(QWidget *parent) {
     setParent(parent);
     QPalette pal(this->palette());
     pal.setColor(QPalette::Background,QColor(255,230,250));
