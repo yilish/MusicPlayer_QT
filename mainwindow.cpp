@@ -358,10 +358,8 @@ void MainWindow::httpFinished() {
             QString name = songName + "-" + artistName;
             m_showPlayList->addSong(name);
             QString songdir = m_database.querySong(name);
-            m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
-            //m_mediaPlayer->play();
+
         }
-        //m_showPlayList->addSong(m_curSongName);
         disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
         disconnect(m_redirectedReply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
         disconnect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
