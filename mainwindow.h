@@ -20,6 +20,7 @@
 #include "lyricwindow.h"
 #include "left_musicshowwidget.h"
 #include "left_musicbutton.h"
+#include "song.h"
 
 
 QT_BEGIN_NAMESPACE

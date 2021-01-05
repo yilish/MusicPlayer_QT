@@ -164,6 +164,23 @@ void MainWindow::updateMusicWidget() {
             ly->setGeometry(0,0,this->rect().width()/3,this->rect().height());
             //m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
             m_mediaPlayer->play();
+            QMediaContent tmp = m_mediaPlayer->currentMedia();
+            QString s = tmp.canonicalUrl().toString();
+            QString ss;
+            for(int i=8;i<s.length();i++)
+            {
+                ss+=s[i];
+            }
+            qDebug() << ss;
+            Song song = m_database.querySongInfo(ss);
+            qDebug() << song.getId()
+                     << song.getName()
+                     << song.getArtist()
+                     << song.getNameArtist()
+                     << song.getSongUrl()
+                     << song.getImageUrl()
+                     << song.getLyricUrl()
+                     << song.getAlbumUrl();
         }
     }
 
@@ -548,8 +565,9 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
     QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
     auto albumObj = albumJson.object();
-    qDebug() << albumObj.value("album").toString();
+    //qDebug() << albumObj.value("album").toString();
     coverLink = albumObj.value("cover").toString();
+    qDebug() << coverLink;
     req.setUrl(coverLink);
     m_albumReply = acMgr->get(req);
     connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);

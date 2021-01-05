@@ -10,6 +10,7 @@
 #include <QtDebug>
 #include <QSqlDriver>
 #include <QSqlRecord>
+#include "song.h"
 
 class DataBase
 {
@@ -25,6 +26,7 @@ public:
     QString queryImage(QString name);//find song image dir
     QString queryLyr(QString name);
     QString queryAlbum(QString name);
+    Song querySongInfo(QString url);
 };
 
 #endif // DATABASE_H
