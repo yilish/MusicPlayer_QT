@@ -12,7 +12,7 @@ public:
         QString songdir,
         QString imagedir,
         QString lyricdir,
-        QString albumdir)
+        QString albumname)
     {
         this->id=id;
         this->name=name;
@@ -21,7 +21,7 @@ public:
         this->songdir=songdir;
         this->imagedir=imagedir;
         this->lyricdir=lyricdir;
-        this->albumdir=albumdir;
+        this->album=albumname;
     }
     Song(){}
     QString getName(){return name;}
@@ -31,16 +31,16 @@ public:
     QString getSongUrl(){return songdir;}
     QString getImageUrl(){return imagedir;}
     QString getLyricUrl(){return lyricdir;}
-    QString getAlbumUrl(){return albumdir;}
+    QString getAlbumName(){return album;}
 private:
     QString name;
     QString artist;
     QString id;
     QString name_artist;
     QString songdir;
-    QString albumdir;
     QString imagedir;
     QString lyricdir;
+    QString album;
 };
 
 #endif // SONG_H

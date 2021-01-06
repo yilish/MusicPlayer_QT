@@ -15,7 +15,6 @@ void LyricWindow::setText(const QString &curText)
 {
     if (text() != curText) {
         QLabel::setText(curText);
-        //qDebug() << curText<< "676666666666666666";
         emit currentTextChanged();
     }
 }
@@ -47,11 +46,9 @@ int LyricWindow::getHeight()
 
     QString newMsg;
     QString message = text().toUtf8().data();
-    //qDebug() << message << "utf8";
     int len = message.length();
     QString mss;
     mss = message;
-    //memcpy(mss,text().toLatin1().data(),len);
 
     int i;
     int row =1;
@@ -63,7 +60,6 @@ int LyricWindow::getHeight()
     QFontMetrics fm = fontMetrics();
     int  h = 18;    // 这里指定我们想要的字体高度
 
-    //printf("len  = %d\n",len);
     for (i=0; i<len; i++) {
 
         font_width = fm.width(mss[i]);
@@ -83,14 +79,12 @@ int LyricWindow::getHeight()
 
         line_width += font_width;
         newMsg[j++] = mss[i];
-        //printf("line_width = %d\n",line_width);
         if (line_width > max_width) max_width = line_width;
 
         if(j == sizeof(newMsg)-1) break;
 
     }
 
-    //printf("row = %d\n",row);
 
     // 上面经过处理得到结果，查看下有多少行。
     // 设置到QLabel 上去

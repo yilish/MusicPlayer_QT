@@ -12,10 +12,10 @@ Down_PlayList::Down_PlayList(QWidget *parent) : QWidget(parent)
 
     //设置播放列表
     m_PlayList = new QTableView(this);
-    m_PlayList->setGeometry(0, 65, 500, 700);
+    m_PlayList->setGeometry(100, 65, 400, 700);
     m_PlayList->setModel(m_PlayListModel);
     m_PlayList->verticalHeader()->hide();
-    m_PlayList->setColumnWidth(0, 500);
+    m_PlayList->setColumnWidth(0, 400);
     m_PlayList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_PlayList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_PlayList->setAlternatingRowColors(true);
