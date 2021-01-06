@@ -70,14 +70,15 @@ private:
     QString getArtistName(QJsonObject obj);
     void mousePressEvent(QMouseEvent *e);
     bool isInRange(QPoint p,QWidget* widget);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void closeEvent(QCloseEvent *event);
 
-
-
-
-
+    bool m_pressed = false;
 
     Ui::MainWindow *ui;
     QLabel* m_lblLogo;
+    QPoint m_point;
     QWidget* m_downWidget;
     QWidget* m_topWidget;
     QWidget* m_redWidget;

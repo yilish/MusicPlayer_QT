@@ -367,6 +367,14 @@ void MainWindow::mousePressEvent(QMouseEvent *e) {
     if (!isInRange(e->pos(), m_showPlayList)) {
         m_showPlayList->hide();
     }
+
+    if(e->pos().y()<69) {
+        e->ignore();
+        if(e->button() == Qt::LeftButton) {
+            m_pressed = true;
+            m_point = e->pos();
+        }
+    }
 }
 
 bool MainWindow::isInRange(QPoint p, QWidget *widget) {
@@ -670,4 +678,27 @@ void MainWindow::closeMainwindow() {
     animation->setEndValue(QRect(geometry().x(), geometry().y(), 0, 0));
     connect(animation,SIGNAL(finished()),this,SLOT(close()));
     animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if(event->pos().y()<69)
+    {
+            if(m_pressed)
+            {
+                move(event->pos()-m_point+pos());
+            }
+    }
+}
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+     if(event->pos().y()<69)
+     {
+         m_pressed=false;
+     }
+}
+void MainWindow::closeEvent(QCloseEvent *event) {
+    Q_UNUSED(event);
 }
