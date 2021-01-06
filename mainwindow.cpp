@@ -118,6 +118,15 @@ MainWindow::MainWindow(QWidget *parent)
     m_downBtnPlayList = new Down_PlayListButton(m_downWidget);
     m_downBtnPlayList->setGeometry(1220, 0, 180, 70);
     m_showPlayList = new Down_PlayList(this);
+    {
+        QSqlDatabase db = QSqlDatabase::database("QSQLITE");
+        QSqlQuery query(db);
+        query.exec(QString("select songartist from songlist"));
+        while(query.next())
+        {
+            m_showPlayList->addSong(query.value(0).toString());
+        }
+    }
 
 
     //init of play list
@@ -170,15 +179,38 @@ void MainWindow::updateMusicWidget() {
         //播放列表空否？
         if (!m_mediaPlayList->isEmpty()) {
             QStringList m_lyricList = m_lyricLoader.lyric();
+            QString allLyrics;
             for(int i = 0; i< m_lyricList.size();++i)
             {
                 //QString tmp = m_lyricList.at(i);
                 //qDebug() << tmp;
-                m_lyricWindow->setText(m_lyricList.at(i));
+                allLyrics +=m_lyricList.at(i)+"\n";
+                //m_lyricWindow->setText(m_lyricList.at(i));
             }
-            m_lyricWindow->show();
-            m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
+            QLabel *ly = new QLabel(allLyrics, this);
+            //m_lyricWindow->setText(allLyrics);
+            //m_lyricWindow->show();
+            ly->show();
+            ly->setGeometry(0,0,this->rect().width()/3,this->rect().height());
+            //m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
             m_mediaPlayer->play();
+            QMediaContent tmp = m_mediaPlayer->currentMedia();
+            QString s = tmp.canonicalUrl().toString();
+            QString ss;
+            for(int i=8;i<s.length();i++)
+            {
+                ss+=s[i];
+            }
+            qDebug() << ss;
+            Song song = m_database.querySongInfo(ss);
+            qDebug() << song.getId()
+                     << song.getName()
+                     << song.getArtist()
+                     << song.getNameArtist()
+                     << song.getSongUrl()
+                     << song.getImageUrl()
+                     << song.getLyricUrl()
+                     << song.getAlbumUrl();
         }
     }
 
@@ -478,7 +510,7 @@ void MainWindow::httpFinished() {
     m_downloadProgressBar->hide();
     //qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
     if (m_curFile->size() > 1000) {
-        if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName))
+        if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName, coverLink))
         {
             QString name = songName + "-" + artistName;
             m_showPlayList->addSong(name);
@@ -586,8 +618,9 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
     QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
     auto albumObj = albumJson.object();
-    qDebug() << albumObj.value("album").toString();
-    auto coverLink = albumObj.value("cover").toString();
+    //qDebug() << albumObj.value("album").toString();
+    coverLink = albumObj.value("cover").toString();
+    qDebug() << coverLink;
     req.setUrl(coverLink);
     m_albumReply = acMgr->get(req);
     connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);

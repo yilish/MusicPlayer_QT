@@ -36,6 +36,7 @@ SOURCES += \
     myslider.cpp \
     qssparser.cpp \
     searchboxproxystyle.cpp \
+    song.cpp \
     top_searchwidget.cpp
 
 HEADERS += \
@@ -56,6 +57,7 @@ HEADERS += \
     myslider.h \
     qssparser.h \
     searchboxproxystyle.h \
+    song.h \
     top_searchwidget.h
 
 FORMS += \

@@ -20,6 +20,7 @@
 #include "lyricwindow.h"
 #include "left_musicshowwidget.h"
 #include "left_musicbutton.h"
+#include "song.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -125,6 +126,7 @@ private:
     QString filePath;    //store the dir of downloaded song
     QString albumName;  //store albumName image dir
     QString lyricFileName;
+    QString coverLink;
     DataBase m_database;    //database that stores songs' information
                             //songname, artistname, song-artist, dir
     int m_unMutedVol;

@@ -31,7 +31,7 @@ bool DataBase::createTable()
     QSqlDatabase db = QSqlDatabase::database("QSQLITE");
     QSqlQuery sql_query(db);
     QString create_sql = "create table songlist(id varchar primary key,songname varchar,"
-                         "artistname varchar,songartist varchar,songdir varchar,imagedir varchar,lyrdir varchar)";
+                         "artistname varchar,songartist varchar,songdir varchar,imagedir varchar,lyrdir varchar,albumdir varchar)";
     //sql_query.prepare();
     if(!sql_query.exec(create_sql))
     {
@@ -44,10 +44,12 @@ bool DataBase::createTable()
 }
 
 //向数据库中插入记录
-bool DataBase::insert(QString id, QString songname, QString artistname, QString songdir, QString imagedir, QString lyrdir)
+bool DataBase::insert(QString id, QString songname, QString artistname, QString songdir, QString imagedir, QString lyrdir, QString albumdir)
 {
     QSqlDatabase db = QSqlDatabase::database("QSQLITE"); //建立数据库连接
     QSqlQuery query(db);
+    //query.prepare("INSERT INTO songlist (id,songname,artistname,songartist,songdir,imagedir,lyrdir,albumdir)"
+                     // "VALUES (:id,:songname,:artistname,:songartist,:songdir,:imagedir,:lyrdir,:albumdir)");
     query.prepare("INSERT INTO songlist (id,songname,artistname,songartist,songdir,imagedir,lyrdir)"
                       "VALUES (:id,:songname,:artistname,:songartist,:songdir,:imagedir,:lyrdir)");
     query.bindValue(":id", id);
@@ -57,6 +59,7 @@ bool DataBase::insert(QString id, QString songname, QString artistname, QString 
     query.bindValue(":songdir", songdir);
     query.bindValue(":imagedir", imagedir);
     query.bindValue(":lyrdir", lyrdir);
+    //query.bindValue(":albumdir", albumdir);
     if(!query.exec())
     {
         QSqlError lastError = query.lastError();
@@ -73,6 +76,49 @@ QString DataBase::querySong(QString name)
     if(!query.exec())
     {
         qDebug() << "song not found";
+        return "";
+    }
+    if(query.first())
+    {
+        //qDebug() << query.value(0).toString();
+        return query.value(0).toString();
+    }
+}
+
+Song DataBase::querySongInfo(QString url)
+{
+    Song song;
+    QSqlDatabase db = QSqlDatabase::database("QSQLITE"); //建立数据库连接
+    QSqlQuery query(db);
+    query.prepare(QString("select * from songlist where songdir = '%1'").arg(url));
+    if(!query.exec())
+    {
+        qDebug() << "album not found";
+        return song;
+    }
+    if(query.first())
+    {
+        //qDebug() << query.value(0).toString();
+        Song song(query.value(0).toString(),
+                  query.value(1).toString(),
+                  query.value(2).toString(),
+                  query.value(3).toString(),
+                  query.value(4).toString(),
+                  query.value(5).toString(),
+                  query.value(6).toString(),
+                  query.value(7).toString());
+        return song;
+    }
+}
+
+QString DataBase::queryAlbum(QString name)
+{
+    QSqlDatabase db = QSqlDatabase::database("QSQLITE"); //建立数据库连接
+    QSqlQuery query(db);
+    query.prepare(QString("select albumdir from songlist where songartist = '%1'").arg(name));
+    if(!query.exec())
+    {
+        qDebug() << "album not found";
         return "";
     }
     if(query.first())
