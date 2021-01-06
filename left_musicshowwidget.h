@@ -8,6 +8,11 @@
 #include <QLabel>
 #include <QAbstractAnimation>
 #include <QPropertyAnimation>
+#include <QBitmap>
+#include <QDebug>
+#include <QFile>
+#include <database.h>
+
 
 class Left_musicShowWidget: public QWidget
 {

@@ -47,7 +47,7 @@ private slots:
     void onPositionChanged(qint64 position);
     void showPlayList();
     void searchSong();
-
+    void showMinWindow();
     void showMusicWidget();
     //void updateDownloadProgress(qint64 bytesRead,qint64 totalBytes);
     void firstFinished();
@@ -60,29 +60,36 @@ private slots:
     void lyricRead();
     void playmodeChanged();
     void playChange();
-    //void clickSongFromPlayList(const QModelIndex &);
+    void closeMainwindow();
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
-
+    void createRedLine();
     void setLeftWidget();
     void createFolder(QString folder);
     QString getSongId(QJsonObject obj);
     QString getArtistName(QJsonObject obj);
     void mousePressEvent(QMouseEvent *e);
     bool isInRange(QPoint p,QWidget* widget);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void closeEvent(QCloseEvent *event);
 
-
-
-
-
+    bool m_pressed = false;
 
     Ui::MainWindow *ui;
+    QLabel* m_lblLogo;
+    QPoint m_point;
     QWidget* m_downWidget;
     QWidget* m_topWidget;
+    QWidget* m_redWidget;
+
+
     QWidget* m_leftWidget;
     QString m_tDuration;
     QString m_tPosition;
+    QPushButton* m_btnMinimum;
+    QPushButton* m_btnClose;
     QMediaPlayer* m_mediaPlayer;
     QMediaPlaylist* m_mediaPlayList;
     Down_PlayWidget* m_downPlayWidget;

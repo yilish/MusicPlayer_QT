@@ -9,14 +9,14 @@ MainWindow::MainWindow(QWidget *parent)
     //初始化数据库
     m_database.createConnection();
     m_database.createTable();
-
+    qDebug() << QCoreApplication::applicationDirPath();
 
 
     //UI设计
     //ui->setupUi(this);
     setMaximumSize(1300,800);
     setMinimumSize(1300,800);//固定软件界面的大小
-    //setWindowFlags(Qt::FramelessWindowHint|windowFlags());//实现无边框
+    setWindowFlags(Qt::FramelessWindowHint|windowFlags());//实现无边框
 
 
 
@@ -55,13 +55,46 @@ MainWindow::MainWindow(QWidget *parent)
     setTopWidget(m_topWidget);
     m_topSearchWidget = new Top_SearchWidget(m_topWidget);
     m_topSearchWidget->setGeometry(348, 20, 360, 48);
+
+    m_lblLogo = new QLabel(m_topWidget);
+    QPixmap pix("D:/DSproj/MusicPlayer/images/wangyiyunicon.png");
+
+    m_lblLogo->setPixmap(pix);
+    qDebug() << pix.width() << pix.height();
+    m_lblLogo->setGeometry(0,0,pix.width(),pix.height());
+    m_lblLogo->show();
+    m_lblLogo->raise();
     //搜索栏初始化
     //起始位置: 315, 65
     //大小: 360, (500)?
+    m_btnMinimum = new QPushButton(m_topWidget);
+    m_btnMinimum->setStyleSheet("QPushButton{background:rgb(50,50,50);border:0px;}\
+                                QPushButton{image:url(:/images/images/min_pressed.png)}\
+                                QPushButton:hover{image:url(:/images/images/min_normal.png)}");
+    m_btnMinimum->setGeometry(1225, 22, 25, 25);
+    m_btnMinimum->setCursor(Qt::PointingHandCursor);
+    m_btnMinimum->setToolTip(QString("最小化"));
+    connect(m_btnMinimum, SIGNAL(clicked(bool)), this, SLOT(showMinWindow()) );
+
+
+    m_btnClose = new QPushButton(m_topWidget);
+    m_btnClose->setCursor(Qt::PointingHandCursor);
+    m_btnClose->setToolTip(QString("关闭"));
+    m_btnClose->setGeometry(1255, 22, 25, 25);
+    m_btnClose->setStyleSheet("QPushButton{background:rgb(50,50,50);border:0px;}\
+                                   QPushButton{image:url(:/images/images/close_normal.png)}\
+                                   QPushButton:hover{image:url(:/images/images/close_pressed.png);}");
+    connect(m_btnClose,SIGNAL(clicked(bool)),this,SLOT(closeMainwindow()));
+
+
+
+
+    //middle
     m_middleMusicShow = new Middle_musicShow(this);
     m_middleMusicShow->lower();
     m_middleMusicShow->setGeometry(250,69,1050,661);
 
+    createRedLine();
     //歌词窗体QLabel
     m_lyricWindow = new LyricWindow(this);
     QFont ft;
@@ -99,9 +132,6 @@ MainWindow::MainWindow(QWidget *parent)
     //init of play list
     m_mediaPlayList = new QMediaPlaylist(this);
     m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test.mp3"));
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test1.mp3"));
-    //m_mediaPlayList->addMedia(QUrl::fromLocalFile("D:/DSproj/music/test2.mp3"));
     m_mediaPlayList->setCurrentIndex(0);
 
     //bind list with player
@@ -309,9 +339,19 @@ void MainWindow::setTopWidget(QWidget *widget) {
     widget->show();
 }
 
-
-void MainWindow::setLeftWidget()
+void MainWindow::createRedLine()
 {
+    m_redWidget = new QWidget(this);
+    m_redWidget->setGeometry(0,65,1300,4);
+    QPalette pal(m_redWidget->palette());
+    pal.setColor(QPalette::Background,QColor(177,34,34));
+    m_redWidget->setAutoFillBackground(true);
+    m_redWidget->setPalette(pal);
+    m_redWidget->show();
+}
+
+
+void MainWindow::setLeftWidget() {
     m_leftWidget->setGeometry(0,69,250,661);
     QPalette pal(m_leftWidget->palette());
     pal.setColor(QPalette::Background,QColor(52,53,44));
@@ -358,6 +398,14 @@ void MainWindow::mousePressEvent(QMouseEvent *e) {
 
     if (!isInRange(e->pos(), m_showPlayList)) {
         m_showPlayList->hide();
+    }
+
+    if(e->pos().y()<69) {
+        e->ignore();
+        if(e->button() == Qt::LeftButton) {
+            m_pressed = true;
+            m_point = e->pos();
+        }
     }
 }
 
@@ -419,6 +467,11 @@ void MainWindow::searchSong() {
         }
     }
 
+}
+
+void MainWindow::showMinWindow()
+{
+    showMinimized();
 }
 
 void MainWindow::showMusicWidget() {
@@ -648,4 +701,37 @@ void MainWindow::playChange()
     qDebug() << m_lyricLoader.loadFromFile(lyrdir);
 
     //m_mediaPlayer->play();
+}
+
+void MainWindow::closeMainwindow() {
+    this->setMinimumSize(0,0);
+    QPropertyAnimation *animation=new QPropertyAnimation(this,"geometry");
+    animation->setDuration(500);
+    animation->setStartValue(geometry());
+    animation->setEndValue(QRect(geometry().x(), geometry().y(), 0, 0));
+    connect(animation,SIGNAL(finished()),this,SLOT(close()));
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if(event->pos().y()<69)
+    {
+            if(m_pressed)
+            {
+                move(event->pos()-m_point+pos());
+            }
+    }
+}
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+     if(event->pos().y()<69)
+     {
+         m_pressed=false;
+     }
+}
+void MainWindow::closeEvent(QCloseEvent *event) {
+    Q_UNUSED(event);
 }
