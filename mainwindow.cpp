@@ -51,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_leftMusicShowWidget = new Left_musicShowWidget(this);
     m_leftMusicShowWidget->setGeometry(0,730,0,0);
 
+    m_lyricwindow = new LyricWindow(m_leftMusicShowWidget);
+    m_lyricwindow->setGeometry(650, 200, 600, 600);
+
     //上边框初始化
     m_topWidget = new QWidget(this);
     setTopWidget(m_topWidget);
@@ -97,16 +100,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     createRedLine();
     //歌词窗体QLabel
-
-    m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
-    QFont ft;
-    ft.setPointSize(16);
-    ft.setFamily("等线");
-    QPalette pa;
-    pa.setColor(QPalette::WindowText,Qt::red);
-    m_lyricWindow->setFont(ft);
-    m_lyricWindow->setPalette(pa);
-    m_lyricWindow->setGeometry(650, 200, 0, 0);
 
 
     m_searchResult = new Middle_searchResult(this);
@@ -203,23 +196,6 @@ void MainWindow::updateMusicWidget() {
     if (m_downPlayWidget->m_btnPlay->isChecked()) {
         //播放列表空否？
         if (!m_mediaPlayList->isEmpty()) {
-            QStringList m_lyricList = m_lyricLoader.lyric();
-            QString allLyrics;
-            for(int i = 0; i< m_lyricList.size();++i)
-            {
-                //QString tmp = m_lyricList.at(i);
-                //qDebug() << tmp;
-                allLyrics +=m_lyricList.at(i)+"\n";
-                //m_lyricWindow->setText(m_lyricList.at(i));
-            }
-            QLabel *ly = new QLabel(allLyrics, this);
-            m_lyricWindow->setText(allLyrics);
-            m_lyricWindow->show();
-
-            /*ly->show();
-            ly->setGeometry(0,0,this->rect().width()/3,this->rect().height()/2);
-            ly->setScaledContents(true);*/
-            //m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
             m_mediaPlayer->play();
 
             QMediaContent tmp = m_mediaPlayer->currentMedia();
@@ -239,7 +215,6 @@ void MainWindow::updateMusicWidget() {
     }
 
     else {
-        m_lyricWindow->hide();
         m_mediaPlayer->pause();
         m_leftMusicShowWidget->m_tmrUpdate->stop();
         m_leftMusicShowWidget->updateStick();
@@ -334,7 +309,7 @@ void MainWindow::onPositionChanged(qint64 position) {
     if (m_downProgressBar->m_sliderPlayProgress->isSliderDown()) {
         return;
     }
-
+    m_lyricwindow->update(position);
     m_downProgressBar->m_sliderPlayProgress->setSliderPosition(position);
     int sec = position / 1000;      //秒数
     int min = sec / 60;
@@ -505,7 +480,6 @@ void MainWindow::showMinWindow()
 }
 
 void MainWindow::showMusicWidget() {
-    m_leftMusicShowWidget->show();
     QPropertyAnimation *animation=new QPropertyAnimation(m_leftMusicShowWidget,"geometry");
     animation->setDuration(300);
     animation->setStartValue(QRect(0,730,1300,0));
@@ -743,7 +717,8 @@ void MainWindow::playChange()
         qDebug() << "No url existed!";
     }
     qDebug() << m_lyricLoader.loadFromFile(lyrdir);
-
+    auto ly = m_lyricLoader.getAllLine();
+    m_lyricwindow->getLyric(ly);
     //m_mediaPlayer->play();
 }
 

@@ -1,136 +1,117 @@
 #include "lyricwindow.h"
-
-#include <QPainter>
-#include <QTimerEvent>
-#include <QTimer>
 #include <QDebug>
-LyricWindow::LyricWindow(QWidget *parent, Qt::WindowFlags f) :
-    QLabel(parent,f)
+LyricWindow::LyricWindow(QWidget* parent): QWidget(parent)
 {
-    setParent(parent);
-    offset = timerID = textHeight = 0;
-    connect(this, SIGNAL(currentTextChanged()), SLOT(metrics()));
-    this->setFixedSize(1500, 3000);
-}
-void LyricWindow::setText(const QString &curText)
-{
-    if (text() != curText) {
-        QLabel::setText(curText);
-        emit currentTextChanged();
+    normal_font.setPointSize(12);
+    focus_font.setPointSize(18);
+    focus_font.setBold(75);
+    normal_pal.setColor(QPalette::WindowText,Qt::gray);
+    focus_pal.setColor(QPalette::WindowText,Qt::white);
+    cur_time = 0;
+    focus_line = 0;
+    top_line = 0;
+    buttom_line = 8;
+    int x = 0, y = 0;
+    for(int i = 0; i < 9; i++)
+    {
+        lines[i] = new QLabel(this);
+        lines[i]->setGeometry(x, y, 400, 100);
+        y += 40;
     }
 }
-void LyricWindow::LoadLyricLine(QList<LyricLine> ll)
+
+void LyricWindow::normal(int x)
 {
-    mline = ll;
+    lines[x]->setFont(normal_font);
+    lines[x]->setPalette(normal_pal);
 }
-// 开始启动定时器 设为 50
-void LyricWindow::startScroll()
+void LyricWindow::focus(int x)
 {
-   timerID = startTimer(1);
+    lines[x]->setFont(focus_font);
+    lines[x]->setPalette(focus_pal);
 }
-
-void LyricWindow::metrics()
+void LyricWindow::update(qint64 position)
 {
-    offset = 0;
-
-    // getHeight + QLabel高度是为了 一段过长的文字显示完后再重新开始滚动显示
-    // 不然的话第一行会紧接着末尾显示出来。
-    //textHeight = getHeight() +height() ;
-    //textHeight = height();
-    QTimer::singleShot(500, this, SLOT(startScroll()));
-    this->update();
-}
-
-// 这里是重点，我们得到的一段信息有没有换行符号，要自动换行
-// 这就要得到字体的高度和宽度来处理这一段文字，处理完后调用
-// setText() 设置到Qlabel 上面去。
-int LyricWindow::getHeight()
-{
-    #define MARGIN  5
-
-    QString newMsg;
-    QString message = text().toUtf8().data();
-    int len = message.length();
-    QString mss;
-    mss = message;
-
-    int i;
-    int row =1;
-    int line_width =0;
-    int font_width = 0;
-    int max_width = 0;
-    int j=0;
-
-    QFontMetrics fm = fontMetrics();
-    int  h = 18;    // 这里指定我们想要的字体高度
-
-    for (i=0; i<len; i++) {
-
-        font_width = fm.width(mss[i]);
-        if (mss[i] == '\n') {       // line feed
-            line_width = 0;
-            newMsg[j++] = mss[i];
-            row++;
-            continue;
+    int flag = 0;
+    int pos = 0;
+    for(pos = 0; pos < line.size() - 1; pos++)
+    {
+        if(line.at(pos + 1)->time > position)
+        {
+            flag = 1;
+            break;
         }
-
-        if ((line_width+font_width) > width()) {
-            max_width = line_width;
-            newMsg[j++] = '\n';
-            line_width = 0;
-            row++;
+    }
+    if(pos != cur_line && flag == 1)
+    {
+        cur_line = pos;
+        for(int i = top_line; i < buttom_line; i++)
+        {
+            lines[i - top_line]->clear();
+            lines[i - top_line]->setText(line.at(i)->text);
+            if(i == pos) focus(i - top_line);
+            else normal(i - top_line);
         }
-
-        line_width += font_width;
-        newMsg[j++] = mss[i];
-        if (line_width > max_width) max_width = line_width;
-
-        if(j == sizeof(newMsg)-1) break;
-
+        if(pos - 4 < 0) top_line = 0;
+        else top_line = pos - 4;
+        if(top_line + 9 > line.size()) buttom_line = line.size();
+        else buttom_line = top_line + 9;
     }
-
-
-    // 上面经过处理得到结果，查看下有多少行。
-    // 设置到QLabel 上去
-    setText(newMsg);
-    // 返回 行*字体高度 + 这里我们加了10 的预留空间。
-    return row*h+(MARGIN<<1);
+    /*
+    //qint64 pos = position / 10;
+    qDebug() << "cur time: " << cur_time;
+    qDebug() << "next_time： " << next_time;
+    if(position > next_time)
+    {
+        //qDebug() << next_time;
+        cur_time = next_time;
+        for(int i = 0; i < 8; i++)
+        {
+            lines[i]->clear();
+            lines[i]->setText(lines[i + 1]->text());
+            if(i == focus_line) focus(i);
+            else normal(i);
+        }
+        if(focus_line < 4) focus_line++;
+        if(cur_line + 1 < line.size())
+        {
+            cur_line++;
+            next_time = line.at(cur_line)->time;
+        }
+        else
+        {
+            focus_line--;
+        }
+        if(top_line + 1 < line.size())
+        {
+            top_line++;
+        }
+        if(buttom_line + 1 < line.size())
+        {
+            buttom_line++;
+            lines[8]->clear();
+            lines[8]->setText(line.at(buttom_line)->text);
+        }
+        else lines[8]->clear();
+    }
+    */
 }
-
-// 显示我们就启动定时器
-void LyricWindow::showEvent(QShowEvent *)
+void LyricWindow::getLyric(QList<LyricLine*> l)
 {
-    metrics();
-}
-
-
-void LyricWindow::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    if (textHeight < 1) return;
-
-    int y = -offset;
-    while (y < height()) {
-        painter.drawText(0, y, width(), textHeight,
-        Qt::AlignLeft | Qt::AlignVCenter, text());
-        y += textHeight;
+    cur_time = 0;
+    next_time = l.at(0)->time;
+    focus_line = 0;
+    top_line = 0;
+    if(l.size() > 9) buttom_line = 9;
+    else buttom_line = l.size();
+    cur_line = 0;
+    line = l;
+    for(int i = top_line; i < buttom_line; i++)
+    {
+        lines[i]->clear();
+        lines[i]->setText(line.at(i)->text);
+        if(i == focus_line) focus(i);
+        else normal(i);
     }
 }
-void LyricWindow::timerEvent(QTimerEvent *event)
-{
-    if (event->timerId() == timerID) {
-        ++offset;
-        if (offset >= textHeight)
-        offset = 0;
-        scroll(0, -1);    // X 轴不变，Y 轴 向上偏移 1
-    } else {
-        QWidget::timerEvent(event);
-    }
-}
 
-// 隐藏我们就停止掉 定时器
-void LyricWindow::hideEvent(QHideEvent *)
-{
-     offset = 0;
-     if (timerID) killTimer(timerID);
-}

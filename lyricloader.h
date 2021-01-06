@@ -10,8 +10,6 @@ namespace QJson { class Parser; }
 class QNetworkAccessManager;
 class QNetworkReply;
 
-class LyricLine;
-
 class LyricLoader : public QObject
 {
     Q_OBJECT
@@ -34,7 +32,8 @@ public:
     QStringList lyric() const;
     bool hasTimer() const;
     bool loading() const;
-    QList<LyricLine> getAllLine();
+public:
+    QList<LyricLine*> getAllLine();
 
 signals:
     void lyricChanged();

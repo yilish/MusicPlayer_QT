@@ -10,14 +10,14 @@
 
 #include <QDebug>
 
-QList<LyricLine> mLines;
+QList<LyricLine*> mLines;
 bool mHasTimer;
 
 bool lyricTimeLessThan(const LyricLine* line1, const LyricLine* line2)
 {
     return line1->time < line2->time;
 }
-QList<LyricLine> getAllLine()
+QList<LyricLine*> LyricLoader::getAllLine()
 {
     return mLines;
 }
@@ -135,10 +135,12 @@ bool LyricLoader::processContent(const QString &content)
             }
             // 步骤3
             QString text = content.mid(lastPos, pos - lastPos);
-            //qDebug() << text << "123456";
             if (!text.isEmpty()) {
                 foreach (const int& time, timeLabels)
+                {
+                    //qDebug() << time;
                     mLines.append(new LyricLine(time, text.trimmed()));
+                }
                 timeLabels.clear();
             }
         }

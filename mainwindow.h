@@ -17,10 +17,12 @@
 #include "database.h"
 #include "middle_musicshow.h"
 #include "lyricloader.h"
-#include "lyricwindow.h"
 #include "left_musicshowwidget.h"
 #include "left_musicbutton.h"
 #include "song.h"
+#include "lyricwindow.h"
+#include <QList>
+#include "lyricline.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -134,6 +136,7 @@ private:
     int m_unMutedVol;
     int m_playMode;
     LyricLoader m_lyricLoader;
-    LyricWindow* m_lyricWindow;
+    LyricWindow* m_lyricwindow;
+
 };
 #endif // MAINWINDOW_H
