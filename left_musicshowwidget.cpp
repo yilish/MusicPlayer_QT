@@ -17,7 +17,7 @@ Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
                                                  QPushButton:hover{background:rgb(100,100,100)}");
     connect(m_btnLess,SIGNAL(clicked(bool)),this,SLOT(minimumWidget()));
     m_tmrUpdate = new QTimer(this);
-    m_tmrUpdate->setInterval(25);
+    m_tmrUpdate->setInterval(1);
     connect(m_tmrUpdate,SIGNAL(timeout()),this,SLOT(updateAlbum()));
     m_tmrUpdateNew = new QTimer(this);
     m_tmrUpdateNew->setInterval(15);
@@ -27,7 +27,7 @@ Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
     m_lblArtist = new QLabel(this);
     m_lblAlbum = new QLabel(this);
     QPalette pal0;
-    pal0.setColor(QPalette::WindowText,QColor(255,250,200));
+    pal0.setColor(QPalette::WindowText,QColor(213,213,213));
     QFont font0("微软雅黑",14);
     QFont font1("微软雅黑",10);
     m_lblSong->setFont(font0);
@@ -129,14 +129,22 @@ void Left_musicShowWidget::setSong(Song *song)
     this->m_lblAlbum->setText(song->getAlbumName());
     this->m_lblSong->setText(song->getName());
     qDebug() << song->getImageUrl();
+
     if (m_albumCover.load(song->getImageUrl())) {
+
         qDebug() << "successfully loaded this new pix.";
         m_albumCover = PixmapToRound(m_albumCover, 110);
 
 
     }
     else {
-        qDebug() << "loading failed.";
+        QImage image;
+        image.load(song->getImageUrl());
+
+        m_albumCover = QPixmap::fromImage(image.scaled(QSize(8192, 1934), Qt::KeepAspectRatio));
+        if (m_albumCover.isNull()) {
+            qDebug() << "loading failed.";
+        }
     }
 
 
@@ -155,7 +163,10 @@ void Left_musicShowWidget::minimumWidget() {
 }
 
 void Left_musicShowWidget::updateAlbum() {
-    i = (i + 1) % 360;
+    i += 0.001;
+    if (i > 360) {
+        i = 0;
+    }
     update();
 }
 
