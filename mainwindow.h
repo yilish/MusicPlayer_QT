@@ -46,7 +46,7 @@ private slots:
     void onPositionChanged(qint64 position);
     void showPlayList();
     void searchSong();
-
+    void showMinWindow();
     void showMusicWidget();
     //void updateDownloadProgress(qint64 bytesRead,qint64 totalBytes);
     void firstFinished();
@@ -59,7 +59,7 @@ private slots:
     void lyricRead();
     void playmodeChanged();
     void playChange();
-    //void clickSongFromPlayList(const QModelIndex &);
+    void closeMainwindow();
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
@@ -86,6 +86,8 @@ private:
     QWidget* m_leftWidget;
     QString m_tDuration;
     QString m_tPosition;
+    QPushButton* m_btnMinimum;
+    QPushButton* m_btnClose;
     QMediaPlayer* m_mediaPlayer;
     QMediaPlaylist* m_mediaPlayList;
     Down_PlayWidget* m_downPlayWidget;
