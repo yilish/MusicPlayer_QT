@@ -69,6 +69,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    ../build-MusicPlayer-Desktop_Qt_5_12_9_MinGW_64_bit-Debug/debug/album/a.jpg \
     images/IconNextSong.ico \
     images/IconNextSong.jpg \
     images/IconPrevSong.ico \

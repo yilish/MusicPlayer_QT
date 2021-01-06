@@ -38,6 +38,7 @@ public:
 signals:
 
 private slots:
+    void updateMusicShowWidget(QMediaContent media);
     void updateMusicWidget();
     void playNextSong();
     void playPrevSong();

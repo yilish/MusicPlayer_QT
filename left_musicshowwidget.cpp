@@ -4,14 +4,6 @@
 Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
     setParent(parent);
     this->hide();
-//    m_lyricWindow = new LyricWindow(this);
-//    QFont ft;
-//    ft.setPointSize(12);
-//    QPalette pa;
-//    pa.setColor(QPalette::WindowText,Qt::red);
-//    m_lyricWindow->setFont(ft);
-//    m_lyricWindow->setPalette(pa);
-//    m_lyricWindow->setGeometry(650,130, 200, 500);
     QPalette pal;
     m_color = QColor(43,43,43);
     m_color.setAlphaF(1);
@@ -36,8 +28,8 @@ Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
     m_lblAlbum = new QLabel(this);
     QPalette pal0;
     pal0.setColor(QPalette::WindowText,QColor(255,250,200));
-    QFont font0("微软雅黑",20);
-    QFont font1("微软雅黑",12);
+    QFont font0("微软雅黑",14);
+    QFont font1("微软雅黑",10);
     m_lblSong->setFont(font0);
     m_lblSong->setPalette(pal0);
     m_lblArtist->setFont(font1);
@@ -45,15 +37,18 @@ Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
     m_lblAlbum->setFont(font1);
     m_lblAlbum->setPalette(pal0);
     m_lblSong->setText("网易云音乐");
-    m_lblSong->setGeometry(650,75,300,35);
+    m_lblSong->setGeometry(650,75,300,45);
+
+    //m_lblSong->setFont(songFt);
     m_lblArtist->setText("歌手");
-    m_lblArtist->setGeometry(650,130,80,25);
+    m_lblArtist->setGeometry(650,130,80,35);
     m_lblSong->show();
     m_lblAlbum->setText("专辑");
-    m_lblAlbum->setGeometry(780,130,300,25);
+    m_lblAlbum->setGeometry(780,130,300,35);
     m_lblAlbum->show();
+
 }
-static QPixmap PixmapToRound(QPixmap &src, int radius)
+QPixmap PixmapToRound(QPixmap &src, int radius)
 {
     if (src.isNull()) {
         return QPixmap();
@@ -116,18 +111,35 @@ void Left_musicShowWidget::paintEvent(QPaintEvent *event)
     painter.drawPixmap(0,0,500,500,pix);
     painter.restore();
 
-    QPixmap albumCover;
-    //auto albumPath = DataBase::queryImage();
-    auto curPath = QCoreApplication::applicationDirPath();
-    albumCover.load(curPath + "/album/Drake-God's Plan.jpg");
-    albumCover = PixmapToRound(albumCover, 110);
+
     painter.save();
     painter.translate(173, 205);
     painter.translate(110,110);
     painter.rotate(i++);
     painter.translate(-110,-110);
-    painter.drawPixmap(0,0,220,220,albumCover);
+    if (!m_albumCover.isNull()) {
+        painter.drawPixmap(0,0,220,220, m_albumCover);
+    }
     painter.restore();
+}
+
+void Left_musicShowWidget::setSong(Song *song)
+{
+    this->m_lblArtist->setText(song->getNameArtist());
+    this->m_lblAlbum->setText(song->getAlbumName());
+    this->m_lblSong->setText(song->getName());
+    qDebug() << song->getImageUrl();
+    if (m_albumCover.load(song->getImageUrl())) {
+        qDebug() << "successfully loaded this new pix.";
+        m_albumCover = PixmapToRound(m_albumCover, 110);
+
+
+    }
+    else {
+        qDebug() << "loading failed.";
+    }
+
+
 }
 
 void Left_musicShowWidget::minimumWidget() {

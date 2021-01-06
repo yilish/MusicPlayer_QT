@@ -13,6 +13,7 @@
 #include <QFile>
 #include <database.h>
 #include <lyricwindow.h>
+#include "song.h"
 
 class Left_musicShowWidget: public QWidget
 {
@@ -20,6 +21,7 @@ class Left_musicShowWidget: public QWidget
 public:
     Left_musicShowWidget(QWidget* parent);
     void paintEvent(QPaintEvent *event) ;
+    void setSong(Song* song);
     QColor m_color;
     QPushButton* m_btnLess;
     QTimer* m_tmrUpdate;
@@ -28,9 +30,10 @@ public:
     QLabel* m_lblAlbum;
     QLabel* m_lblArtist;
     LyricWindow* m_lyricWindow;
+    QPixmap m_albumCover;
     int i = 0;
     int j = 0;
-private slots:
+public slots:
     void minimumWidget();
     void updateAlbum();
     void updateStick();

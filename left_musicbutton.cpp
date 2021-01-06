@@ -16,6 +16,12 @@ Left_MusicButton::Left_MusicButton(QWidget* parent)
     setPalette(pal1);
 }
 
+void Left_MusicButton::setSong(Song *song)
+{
+    m_lblMusicName->setText(song->getName());
+    m_pix.load(song->getImageUrl());
+}
+
 void Left_MusicButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
