@@ -7,6 +7,7 @@
 LyricWindow::LyricWindow(QWidget *parent, Qt::WindowFlags f) :
     QLabel(parent,f)
 {
+    setParent(parent);
     offset = timerID = textHeight = 0;
     connect(this, SIGNAL(currentTextChanged()), SLOT(metrics()));
     this->setFixedSize(400, 500);
@@ -101,6 +102,7 @@ void LyricWindow::showEvent(QShowEvent *)
 {
     metrics();
 }
+
 
 void LyricWindow::paintEvent(QPaintEvent *event)
 {

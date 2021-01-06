@@ -80,5 +80,6 @@
     </qresource>
     <qresource prefix="/">
         <file>images/greybgc.png</file>
+        <file>downloadBarStyle.qss</file>
     </qresource>
 </RCC>

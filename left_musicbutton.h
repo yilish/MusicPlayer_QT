@@ -11,6 +11,8 @@
 #include <QFont>
 #include <QPalette>
 #include <QColor>
+#include "song.h"
+
 
 class Left_MusicButton : public QPushButton
 {
@@ -19,6 +21,7 @@ public:
     QLabel m_lblAlbumCover;//歌曲封面
     QPixmap m_pix;
     QLabel *m_lblMusicName;//歌曲名称
+    void setSong(Song* song);
 private:
     void paintEvent(QPaintEvent *event);
 };

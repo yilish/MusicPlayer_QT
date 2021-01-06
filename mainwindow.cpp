@@ -22,10 +22,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     //下载进度条的初始化
     m_downloadProgressBar = new QProgressBar(this);
-    m_downloadProgressBar->setGeometry(348, 500, 300, 50);
-    m_downloadProgressBar->hide();
-
-
+    m_downloadProgressBar->setGeometry(730, 28, 400, 15);
+    //m_downloadProgressBar->hide();
+    auto downStyle = new QFile(":/downloadBarStyle.qss");
+    QSSParser parse(downStyle);
+    m_downloadProgressBar->setStyleSheet("QProgressBar{background:rgb(50, 50, 50);} QProgressBar::chunk{border-radius:5px;background:rgb(62,114,143)}");
 
     //边框初始化
     //下边框初始化
@@ -96,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     createRedLine();
     //歌词窗体QLabel
+
     m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
     QFont ft;
     ft.setPointSize(16);
@@ -149,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent)
     //auto durTime = m_mediaPlayer->position();
     m_downProgressBar->update();
     //连接信号与槽
+
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
@@ -162,6 +165,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(onPositionChanged(qint64)));
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(onDurationChanged(qint64)));
+    connect(m_mediaPlayer, SIGNAL(currentMediaChanged(QMediaContent)), this, SLOT(updateMusicShowWidget(QMediaContent)));
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
     connect(m_showPlayList->m_PlayList, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(playChange()));
@@ -174,6 +178,25 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::updateMusicShowWidget(QMediaContent curMedia) {
+    //qDebug() << curMedia.canonicalUrl();
+//    QMediaContent tmp = m_mediaPlayer->currentMedia();
+//    QString s = tmp.canonicalUrl().toString();
+//    QString ss;
+//    for(int i=8;i<s.length();i++)
+//    {
+//        ss+=s[i];
+//    }
+//    qDebug() << ss;
+//    Song song = m_database.querySongInfo(ss);
+//    qDebug() << song.getId()
+//             << song.getName()
+//             << song.getArtist()
+//             << song.getNameArtist()
+//             << song.getAlbumName();
+    //m_leftMusicShowWidget->setSong(&song);
 }
 
 void MainWindow::updateMusicWidget() {
@@ -208,17 +231,22 @@ void MainWindow::updateMusicWidget() {
             }
             qDebug() << ss;
             Song song = m_database.querySongInfo(ss);
-            qDebug() << song.getId()
-                     << song.getName()
-                     << song.getArtist()
-                     << song.getNameArtist()
-                     << song.getAlbumName();
+            m_leftMusicShowWidget->setSong(&song);
+            m_leftBtnFullScreen->setSong(&song);
+            m_leftMusicShowWidget->m_tmrUpdate->start();
+            m_leftMusicShowWidget->m_tmrUpdateNew->start();
         }
     }
 
     else {
         m_lyricWindow->hide();
         m_mediaPlayer->pause();
+        m_leftMusicShowWidget->m_tmrUpdate->stop();
+        m_leftMusicShowWidget->updateStick();
+        if(m_leftMusicShowWidget->j>0)//判断回复杆是否归零
+        {
+            m_leftMusicShowWidget->j=0;
+        }
     }
 
 }
@@ -602,7 +630,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
         m_lyricFile->close();
     }
 
-    auto albumLink = QString("https://api.paugram.com/netease/?id=" + strId);
+    auto albumLink = QString("https://api.imjad.cn/cloudmusic/?type=detail&id=" + strId);
     req.setUrl(albumLink);
     m_albumReply = acMgr->get(req);
     QEventLoop albumLoop;
@@ -612,7 +640,14 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
     QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
     auto albumObj = albumJson.object();
-    coverLink = albumObj.value("cover").toString();
+    auto songArr = albumObj.value("songs").toArray();
+    auto songObj = songArr.at(0).toObject();
+    auto newSongObj = songObj.value("al").toObject();
+    qDebug() << "newSongObj:" << newSongObj;
+    auto abname = newSongObj.value("name").toString();
+    qDebug() << "abName:" << abname;
+    coverLink = newSongObj.value("picUrl").toString();
+    qDebug() << "coverLink:" << coverLink;
     req.setUrl(coverLink);
     m_albumReply = acMgr->get(req);
     connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
@@ -626,7 +661,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
         m_albumFile->write( m_albumReply->readAll());
         m_albumFile->close();
         qDebug() << "successfully downloaded the album cover.";
-        auto abname = albumObj.value("album").toString();
+        //auto abname = albumObj.value("album").toString();
         if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName, abname))
         {
             QString name = songName + "-" + artistName;
@@ -699,7 +734,14 @@ void MainWindow::playChange()
     QString songdir = m_database.querySong(name);
     QString lyrdir = m_database.queryLyr(name);
     m_mediaPlayList->clear();
-    m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+    if(songdir!="")
+    {
+        m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+    }
+    else
+    {
+        qDebug() << "No url existed!";
+    }
     qDebug() << m_lyricLoader.loadFromFile(lyrdir);
 
     //m_mediaPlayer->play();
