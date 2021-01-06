@@ -63,7 +63,7 @@ private slots:
     void doProcessError(QNetworkReply::NetworkError code);
     void lyricRead();
     void playmodeChanged();
-    void playChange();
+    void playListChange();
     void closeMainwindow();
 private:
     void setDownWidget(QWidget* widget);

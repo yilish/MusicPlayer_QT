@@ -3,8 +3,8 @@
 LyricWindow::LyricWindow(QWidget* parent): QWidget(parent)
 {
     normal_font.setPointSize(12);
-    focus_font.setPointSize(18);
-    focus_font.setBold(75);
+    focus_font.setPointSize(16);
+    focus_font.setBold(100);
     normal_pal.setColor(QPalette::WindowText,Qt::gray);
     focus_pal.setColor(QPalette::WindowText,Qt::white);
     cur_time = 0;
@@ -15,7 +15,7 @@ LyricWindow::LyricWindow(QWidget* parent): QWidget(parent)
     for(int i = 0; i < 9; i++)
     {
         lines[i] = new QLabel(this);
-        lines[i]->setGeometry(x, y, 400, 100);
+        lines[i]->setGeometry(x, y, 800, 100);
         y += 40;
     }
 }
