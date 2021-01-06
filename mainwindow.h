@@ -35,6 +35,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+signals:
 
 private slots:
     void updateMusicWidget();

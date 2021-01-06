@@ -22,10 +22,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     //下载进度条的初始化
     m_downloadProgressBar = new QProgressBar(this);
-    m_downloadProgressBar->setGeometry(348, 500, 300, 50);
-    m_downloadProgressBar->hide();
-
-
+    m_downloadProgressBar->setGeometry(730, 28, 400, 15);
+    //m_downloadProgressBar->hide();
+    auto downStyle = new QFile(":/downloadBarStyle.qss");
+    QSSParser parse(downStyle);
+    m_downloadProgressBar->setStyleSheet("QProgressBar{background:rgb(50, 50, 50);} QProgressBar::chunk{border-radius:5px;background:rgb(62,114,143)}");
 
     //边框初始化
     //下边框初始化
@@ -96,13 +97,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     createRedLine();
     //歌词窗体QLabel
-    m_lyricWindow = new LyricWindow(this);
-    QFont ft;
-    ft.setPointSize(12);
-    QPalette pa;
-    pa.setColor(QPalette::WindowText,Qt::red);
-    m_lyricWindow->setFont(ft);
-    m_lyricWindow->setPalette(pa);
+//    m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
+//    QFont ft;
+//    ft.setPointSize(12);
+//    QPalette pa;
+//    pa.setColor(QPalette::WindowText,Qt::red);
+//    m_lyricWindow->setFont(ft);
+//    m_lyricWindow->setPalette(pa);
 
 
     m_searchResult = new Middle_searchResult(this);

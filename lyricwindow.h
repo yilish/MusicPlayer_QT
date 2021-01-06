@@ -14,7 +14,7 @@ class LyricWindow: public QLabel
 
     protected:
         void showEvent(QShowEvent *);
-        void paintEvent(QPaintEvent *);
+        //void paintEvent(QPaintEvent *);
         void timerEvent(QTimerEvent *);
         void hideEvent(QHideEvent *);
 

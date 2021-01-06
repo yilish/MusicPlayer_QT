@@ -7,6 +7,7 @@
 LyricWindow::LyricWindow(QWidget *parent, Qt::WindowFlags f) :
     QLabel(parent,f)
 {
+    setParent(parent);
     offset = timerID = textHeight = 0;
     connect(this, SIGNAL(currentTextChanged()), SLOT(metrics()));
 }
@@ -105,18 +106,18 @@ void LyricWindow::showEvent(QShowEvent *)
     metrics();
 }
 
-void LyricWindow::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    if (textHeight < 1) return;
+//void LyricWindow::paintEvent(QPaintEvent *event)
+//{
+//    QPainter painter(this);
+//    if (textHeight < 1) return;
 
-    int y = -offset;
-    while (y < height()) {
-        painter.drawText(0, y, width(), textHeight,
-        Qt::AlignLeft | Qt::AlignVCenter, text());
-        y += textHeight;
-    }
-}
+//    int y = -offset;
+//    while (y < height()) {
+//        painter.drawText(0, y, width(), textHeight,
+//        Qt::AlignLeft | Qt::AlignVCenter, text());
+//        y += textHeight;
+//    }
+//}
 
 void LyricWindow::timerEvent(QTimerEvent *event)
 {

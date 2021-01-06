@@ -4,8 +4,14 @@
 Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
     setParent(parent);
     this->hide();
-
-
+//    m_lyricWindow = new LyricWindow(this);
+//    QFont ft;
+//    ft.setPointSize(12);
+//    QPalette pa;
+//    pa.setColor(QPalette::WindowText,Qt::red);
+//    m_lyricWindow->setFont(ft);
+//    m_lyricWindow->setPalette(pa);
+//    m_lyricWindow->setGeometry(650,130, 200, 500);
     QPalette pal;
     m_color = QColor(43,43,43);
     m_color.setAlphaF(1);
@@ -23,7 +29,7 @@ Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
     connect(m_tmrUpdate,SIGNAL(timeout()),this,SLOT(updateAlbum()));
     m_tmrUpdateNew = new QTimer(this);
     m_tmrUpdateNew->setInterval(15);
-    connect(m_tmrUpdateNew,SIGNAL(timeout()),this,SLOT(updateStick()));
+    connect(m_tmrUpdateNew, SIGNAL(timeout()),this,SLOT(updateStick()));
 
     m_lblSong = new QLabel(this);
     m_lblArtist = new QLabel(this);
@@ -112,7 +118,8 @@ void Left_musicShowWidget::paintEvent(QPaintEvent *event)
 
     QPixmap albumCover;
     //auto albumPath = DataBase::queryImage();
-    albumCover.load("D:/DSproj/build-MusicPlayer-Desktop_Qt_5_12_9_MinGW_64_bit-Debug/debug/album/Drake-God's Plan.jpg");
+    auto curPath = QCoreApplication::applicationDirPath();
+    albumCover.load(curPath + "/album/Drake-God's Plan.jpg");
     albumCover = PixmapToRound(albumCover, 110);
     painter.save();
     painter.translate(173, 205);
@@ -124,7 +131,7 @@ void Left_musicShowWidget::paintEvent(QPaintEvent *event)
 }
 
 void Left_musicShowWidget::minimumWidget() {
-    QPropertyAnimation *animation=new QPropertyAnimation(this,"geometry");
+    QPropertyAnimation *animation = new QPropertyAnimation(this,"geometry");
     animation->setDuration(700);
     //animation->setEasingCurve(QEasingCurve::OutBounce);
     animation->setStartValue(QRect(0,69,1300,661));

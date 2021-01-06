@@ -12,7 +12,7 @@
 #include <QDebug>
 #include <QFile>
 #include <database.h>
-
+#include <lyricwindow.h>
 
 class Left_musicShowWidget: public QWidget
 {
@@ -27,6 +27,7 @@ public:
     QLabel* m_lblSong;
     QLabel* m_lblAlbum;
     QLabel* m_lblArtist;
+    LyricWindow* m_lyricWindow;
     int i = 0;
     int j = 0;
 private slots:
