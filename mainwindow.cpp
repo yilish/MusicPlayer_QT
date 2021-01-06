@@ -97,15 +97,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     createRedLine();
     //歌词窗体QLabel
-<<<<<<< HEAD
-//    m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
-//    QFont ft;
-//    ft.setPointSize(12);
-//    QPalette pa;
-//    pa.setColor(QPalette::WindowText,Qt::red);
-//    m_lyricWindow->setFont(ft);
-//    m_lyricWindow->setPalette(pa);
-=======
+
     m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
     QFont ft;
     ft.setPointSize(12);
@@ -114,7 +106,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_lyricWindow->setFont(ft);
     m_lyricWindow->setPalette(pa);
     m_lyricWindow->setGeometry(700, 200, 200, 200);
->>>>>>> b16f1fe0d86ed9b172b69d76bbb8c5ff151a4034
 
 
     m_searchResult = new Middle_searchResult(this);

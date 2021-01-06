@@ -27,7 +27,7 @@ class LyricWindow: public QLabel
 
     private:
         int getHeight();
-
+        void paintEvent(QPaintEvent *event);
     private:
         int offset;
         int timerID;

@@ -100,21 +100,7 @@ void LyricWindow::showEvent(QShowEvent *)
     metrics();
 }
 
-<<<<<<< HEAD
-//void LyricWindow::paintEvent(QPaintEvent *event)
-//{
-//    QPainter painter(this);
-//    if (textHeight < 1) return;
 
-//    int y = -offset;
-//    while (y < height()) {
-//        painter.drawText(0, y, width(), textHeight,
-//        Qt::AlignLeft | Qt::AlignVCenter, text());
-//        y += textHeight;
-//    }
-//}
-
-=======
 void LyricWindow::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
@@ -127,7 +113,6 @@ void LyricWindow::paintEvent(QPaintEvent *event)
         y += textHeight;
     }
 }
->>>>>>> b16f1fe0d86ed9b172b69d76bbb8c5ff151a4034
 void LyricWindow::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timerID) {
