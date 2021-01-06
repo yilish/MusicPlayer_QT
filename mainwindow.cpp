@@ -97,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     createRedLine();
     //歌词窗体QLabel
+<<<<<<< HEAD
 //    m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
 //    QFont ft;
 //    ft.setPointSize(12);
@@ -104,6 +105,16 @@ MainWindow::MainWindow(QWidget *parent)
 //    pa.setColor(QPalette::WindowText,Qt::red);
 //    m_lyricWindow->setFont(ft);
 //    m_lyricWindow->setPalette(pa);
+=======
+    m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
+    QFont ft;
+    ft.setPointSize(12);
+    QPalette pa;
+    pa.setColor(QPalette::WindowText,Qt::red);
+    m_lyricWindow->setFont(ft);
+    m_lyricWindow->setPalette(pa);
+    m_lyricWindow->setGeometry(700, 200, 200, 200);
+>>>>>>> b16f1fe0d86ed9b172b69d76bbb8c5ff151a4034
 
 
     m_searchResult = new Middle_searchResult(this);
@@ -189,12 +200,15 @@ void MainWindow::updateMusicWidget() {
                 //m_lyricWindow->setText(m_lyricList.at(i));
             }
             QLabel *ly = new QLabel(allLyrics, this);
-            //m_lyricWindow->setText(allLyrics);
-            //m_lyricWindow->show();
-            ly->show();
-            ly->setGeometry(0,0,this->rect().width()/3,this->rect().height());
+            m_lyricWindow->setText(allLyrics);
+            m_lyricWindow->show();
+
+            /*ly->show();
+            ly->setGeometry(0,0,this->rect().width()/3,this->rect().height()/2);
+            ly->setScaledContents(true);*/
             //m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
             m_mediaPlayer->play();
+
             QMediaContent tmp = m_mediaPlayer->currentMedia();
             QString s = tmp.canonicalUrl().toString();
             QString ss;
@@ -208,10 +222,7 @@ void MainWindow::updateMusicWidget() {
                      << song.getName()
                      << song.getArtist()
                      << song.getNameArtist()
-                     << song.getSongUrl()
-                     << song.getImageUrl()
-                     << song.getLyricUrl()
-                     << song.getAlbumUrl();
+                     << song.getAlbumName();
         }
     }
 
@@ -511,14 +522,6 @@ void MainWindow::httpFinished() {
     m_downloadProgressBar->hide();
     //qDebug() << "Downloaded" <<  m_curFile->size() << "bytes" ;
     if (m_curFile->size() > 1000) {
-        if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName, coverLink))
-        {
-            QString name = songName + "-" + artistName;
-            m_showPlayList->addSong(name);
-            QString songdir = m_database.querySong(name);
-            m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
-
-        }
         disconnect(m_redirectedReply,&QNetworkReply::readyRead,this,&MainWindow::httpReadyRead);
         disconnect(m_redirectedReply,&QNetworkReply::downloadProgress,this,&MainWindow::updateDataReadProgress);
         disconnect(m_redirectedReply,&QNetworkReply::finished,this,&MainWindow::httpFinished);
@@ -619,9 +622,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
 
     QJsonDocument albumJson = QJsonDocument::fromJson(albumArray, &jsonErr);
     auto albumObj = albumJson.object();
-    //qDebug() << albumObj.value("album").toString();
     coverLink = albumObj.value("cover").toString();
-    qDebug() << coverLink;
     req.setUrl(coverLink);
     m_albumReply = acMgr->get(req);
     connect (m_albumReply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
@@ -635,6 +636,16 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
         m_albumFile->write( m_albumReply->readAll());
         m_albumFile->close();
         qDebug() << "successfully downloaded the album cover.";
+        auto abname = albumObj.value("album").toString();
+        if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName, abname))
+        {
+            QString name = songName + "-" + artistName;
+            m_showPlayList->addSong(name);
+            QString songdir = m_database.querySong(name);
+            m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+
+        }
+
     }
 }
 
