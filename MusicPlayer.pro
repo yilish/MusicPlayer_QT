@@ -38,6 +38,7 @@ SOURCES += \
     qssparser.cpp \
     searchboxproxystyle.cpp \
     song.cpp \
+    songsheet.cpp \
     top_searchwidget.cpp
 
 HEADERS += \
@@ -60,6 +61,7 @@ HEADERS += \
     qssparser.h \
     searchboxproxystyle.h \
     song.h \
+    songsheet.h \
     top_searchwidget.h
 
 FORMS += \

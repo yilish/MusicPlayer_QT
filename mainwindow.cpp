@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget *parent)
     //左侧菜单初始化
     m_leftWidget = new QWidget(this);
     setLeftWidget();
-    //m_leftTable = new Left_Table(this);
-    //m_leftTable->setGeometry(0, 0, 300, 730);
+    m_leftTable = new Left_Table(this);
+    m_leftTable->setGeometry(0, 0, 300, 665);
     m_leftBtnFullScreen = new Left_MusicButton(m_leftWidget);
     m_leftBtnFullScreen->setGeometry(0,597,250,64);
     connect(m_leftBtnFullScreen,SIGNAL(clicked(bool)),this,SLOT(showMusicWidget()));
@@ -216,6 +216,12 @@ void MainWindow::updateMusicWidget() {
             m_leftBtnFullScreen->setSong(&song);
             m_leftMusicShowWidget->m_tmrUpdate->start();
             m_leftMusicShowWidget->m_tmrUpdateNew->start();
+            if(m_downProgressBar->pos().x() <= 1000)
+            {
+                m_lyricLoader.loadFromFile(song.getLyricUrl());
+                auto ly = m_lyricLoader.getAllLine();
+                m_lyricwindow->getLyric(ly);
+            }
         }
     }
 
@@ -242,7 +248,22 @@ void MainWindow::playNextSong() {
         m_downPlayWidget->m_btnPlay->setChecked(true);
         m_mediaPlayer->play();
     }
-    updateMusicWidget();
+    QMediaContent tmp = m_mediaPlayer->currentMedia();
+    QString s = tmp.canonicalUrl().toString();
+    QString ss;
+    for(int i=8;i<s.length();i++)
+    {
+        ss+=s[i];
+    }
+    qDebug() << ss;
+    Song song = m_database.querySongInfo(ss);
+    m_leftMusicShowWidget->setSong(&song);
+    m_leftBtnFullScreen->setSong(&song);
+    m_leftMusicShowWidget->m_tmrUpdate->start();
+    m_leftMusicShowWidget->m_tmrUpdateNew->start();
+    m_lyricLoader.loadFromFile(song.getLyricUrl());
+    auto ly = m_lyricLoader.getAllLine();
+    m_lyricwindow->getLyric(ly);
 }
 
 void MainWindow::playPrevSong() {
@@ -257,7 +278,22 @@ void MainWindow::playPrevSong() {
         m_mediaPlayer->play();
 
     }
-    updateMusicWidget();
+    QMediaContent tmp = m_mediaPlayer->currentMedia();
+    QString s = tmp.canonicalUrl().toString();
+    QString ss;
+    for(int i=8;i<s.length();i++)
+    {
+        ss+=s[i];
+    }
+    qDebug() << ss;
+    Song song = m_database.querySongInfo(ss);
+    m_leftMusicShowWidget->setSong(&song);
+    m_leftBtnFullScreen->setSong(&song);
+    m_leftMusicShowWidget->m_tmrUpdate->start();
+    m_leftMusicShowWidget->m_tmrUpdateNew->start();
+    m_lyricLoader.loadFromFile(song.getLyricUrl());
+    auto ly = m_lyricLoader.getAllLine();
+    m_lyricwindow->getLyric(ly);
 }
 
 void MainWindow::mute() {
