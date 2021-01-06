@@ -10,7 +10,7 @@ LyricWindow::LyricWindow(QWidget *parent, Qt::WindowFlags f) :
     setParent(parent);
     offset = timerID = textHeight = 0;
     connect(this, SIGNAL(currentTextChanged()), SLOT(metrics()));
-    this->setFixedSize(400, 500);
+    this->setFixedSize(1500, 3000);
 }
 void LyricWindow::setText(const QString &curText)
 {
@@ -36,7 +36,7 @@ void LyricWindow::metrics()
     // getHeight + QLabel高度是为了 一段过长的文字显示完后再重新开始滚动显示
     // 不然的话第一行会紧接着末尾显示出来。
     //textHeight = getHeight() +height() ;
-    textHeight = height();
+    //textHeight = height();
     QTimer::singleShot(500, this, SLOT(startScroll()));
     this->update();
 }

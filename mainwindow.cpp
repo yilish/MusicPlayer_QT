@@ -106,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
     pa.setColor(QPalette::WindowText,Qt::red);
     m_lyricWindow->setFont(ft);
     m_lyricWindow->setPalette(pa);
-    m_lyricWindow->setGeometry(600, 200, 0, 0);
+    m_lyricWindow->setGeometry(650, 200, 0, 0);
 
 
     m_searchResult = new Middle_searchResult(this);
