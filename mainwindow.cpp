@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     //下载进度条的初始化
     m_downloadProgressBar = new QProgressBar(this);
     m_downloadProgressBar->setGeometry(730, 28, 400, 15);
-    //m_downloadProgressBar->hide();
+    m_downloadProgressBar->hide();
     auto downStyle = new QFile(":/downloadBarStyle.qss");
     QSSParser parse(downStyle);
     m_downloadProgressBar->setStyleSheet("QProgressBar{background:rgb(50, 50, 50);} QProgressBar::chunk{border-radius:5px;background:rgb(62,114,143)}");
