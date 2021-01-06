@@ -2,12 +2,14 @@
 #define LYRICWINDOW_H
 
 #include <QLabel>
+#include "lyricloader.h"
 class LyricWindow: public QLabel
 {
     Q_OBJECT
     public:
         explicit LyricWindow(QWidget *parent = 0, Qt::WindowFlags f=0);
-        virtual ~LyricWindow(){}
+        virtual ~LyricWindow(){};
+        void LoadLyricLine(QList<LyricLine> ll);
 
     public slots:
         void setText(const QString &);
@@ -32,6 +34,7 @@ class LyricWindow: public QLabel
         int offset;
         int timerID;
         int textHeight;
+        QList<LyricLine> mline;
 };
 
 #endif // LYRICWINDOW_H

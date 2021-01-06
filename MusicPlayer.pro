@@ -27,6 +27,7 @@ SOURCES += \
     left_musicbutton.cpp \
     left_musicshowwidget.cpp \
     left_table.cpp \
+    lyricline.cpp \
     lyricloader.cpp \
     lyricwindow.cpp \
     main.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
     left_musicbutton.h \
     left_musicshowwidget.h \
     left_table.h \
+    lyricline.h \
     lyricloader.h \
     lyricwindow.h \
     mainwindow.h \

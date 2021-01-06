@@ -98,12 +98,13 @@ MainWindow::MainWindow(QWidget *parent)
     //歌词窗体QLabel
     m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
     QFont ft;
-    ft.setPointSize(12);
+    ft.setPointSize(16);
+    ft.setFamily("等线");
     QPalette pa;
     pa.setColor(QPalette::WindowText,Qt::red);
     m_lyricWindow->setFont(ft);
     m_lyricWindow->setPalette(pa);
-    m_lyricWindow->setGeometry(700, 200, 200, 200);
+    m_lyricWindow->setGeometry(600, 200, 0, 0);
 
 
     m_searchResult = new Middle_searchResult(this);

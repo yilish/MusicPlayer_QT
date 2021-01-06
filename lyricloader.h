@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QPointer>
 #include <QStringList>
-
+#include "lyricline.h"
 namespace QJson { class Parser; }
 
 class QNetworkAccessManager;
@@ -34,6 +34,7 @@ public:
     QStringList lyric() const;
     bool hasTimer() const;
     bool loading() const;
+    QList<LyricLine> getAllLine();
 
 signals:
     void lyricChanged();

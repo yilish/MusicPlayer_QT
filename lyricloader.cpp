@@ -10,23 +10,17 @@
 
 #include <QDebug>
 
-class LyricLine
-{
-public:
-    LyricLine(int time, QString text):time(time), text(text){}
-
-    int time;
-    QString text;
-};
-
-QList<LyricLine*> mLines;
+QList<LyricLine> mLines;
 bool mHasTimer;
 
 bool lyricTimeLessThan(const LyricLine* line1, const LyricLine* line2)
 {
     return line1->time < line2->time;
 }
-
+QList<LyricLine> getAllLine()
+{
+    return mLines;
+}
 bool LyricLoader::loadFromFile(const QString &fileName)
 {
     reset();
