@@ -31,7 +31,7 @@ public:
     QLabel* m_lblArtist;
     LyricWindow* m_lyricWindow;
     QPixmap m_albumCover;
-    int i = 0;
+    double i = 0;
     int j = 0;
 public slots:
     void minimumWidget();
