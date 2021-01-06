@@ -111,7 +111,6 @@ void LyricWindow::paintEvent(QPaintEvent *event)
         y += textHeight;
     }
 }
-
 void LyricWindow::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timerID) {

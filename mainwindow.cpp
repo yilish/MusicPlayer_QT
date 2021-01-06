@@ -96,13 +96,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     createRedLine();
     //歌词窗体QLabel
-    m_lyricWindow = new LyricWindow(this);
+    m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
     QFont ft;
     ft.setPointSize(12);
     QPalette pa;
     pa.setColor(QPalette::WindowText,Qt::red);
     m_lyricWindow->setFont(ft);
     m_lyricWindow->setPalette(pa);
+    m_lyricWindow->setGeometry(700, 200, 200, 200);
 
 
     m_searchResult = new Middle_searchResult(this);
@@ -188,12 +189,12 @@ void MainWindow::updateMusicWidget() {
                 //m_lyricWindow->setText(m_lyricList.at(i));
             }
             QLabel *ly = new QLabel(allLyrics, this);
-            //m_lyricWindow->setText(allLyrics);
-            //m_lyricWindow->show();
+            m_lyricWindow->setText(allLyrics);
+            m_lyricWindow->show();
 
-            ly->show();
+            /*ly->show();
             ly->setGeometry(0,0,this->rect().width()/3,this->rect().height()/2);
-            ly->setScaledContents(true);
+            ly->setScaledContents(true);*/
             //m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
             m_mediaPlayer->play();
 
