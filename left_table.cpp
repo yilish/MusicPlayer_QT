@@ -24,7 +24,7 @@ Left_Table::Left_Table(QWidget *parent) : QWidget(parent)
                                 ");
     m_LeftTable->setFocusPolicy(Qt::NoFocus);
     m_LeftTable->setFrameShape(QFrame::NoFrame);
-    m_LeftTable->horizontalHeader()->setStyleSheet("QHeaderView::section {"
+    m_LeftTable->horizontalHeader()->setStyleSheet("QHeaderView::section {border:none;font-size: 30px;"
                                                                        "color: rgb(214, 214, 214);background-color: rgb(51, 51, 51)}");
 
 }

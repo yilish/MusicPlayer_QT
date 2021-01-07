@@ -105,6 +105,7 @@ private:
     QString m_tPosition;
     QPushButton* m_btnMinimum;
     QPushButton* m_btnClose;
+
     QMediaPlayer* m_mediaPlayer;
     QMediaPlaylist* m_mediaPlayList;
     Down_PlayWidget* m_downPlayWidget;

@@ -21,7 +21,6 @@ class Middle_WheelPic : public QWidget
 public:
     Middle_WheelPic(QWidget* parent);
     //void paintEvent(QPaintEvent *event);
-
     QLabel* m_lblCur;
     QLabel* m_lblPrev;
     QLabel* m_lblPrevPrev;

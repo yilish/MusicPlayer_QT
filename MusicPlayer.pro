@@ -3,7 +3,7 @@ QT       += core gui \
 QT       += multimedia
 QT += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+RC_ICONS = txy1.ico
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -92,6 +92,7 @@ DISTFILES += \
     images/pause.png \
     images/play.png \
     images/play_pressed.png \ \
+    images/txy1.png \
     images/txy2.png \
     images/wangyiyunicon.png
 

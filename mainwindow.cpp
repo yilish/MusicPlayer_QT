@@ -42,14 +42,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     {
         QPushButton *button = new QPushButton("本地音乐");
-        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);}");
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);border:none;}");
         m_leftTable->m_LeftTableModel->setItem(0, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(0, 0), button);
         connect(button, SIGNAL(clicked()), this, SLOT(myMusicClicked()));
     }
     {
-        QPushButton *button = new QPushButton("创建的歌单");
-        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei';text-align:left;font-size:14px; color:rgb(214, 214, 214);}");
+        QPushButton *button = new QPushButton("创建的歌单        +");
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei';text-align:left;font-size:25px; color:rgb(214, 214, 214);border:none;}");
+
         m_leftTable->m_LeftTableModel->setItem(1, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(1, 0), button);
         connect(button, SIGNAL(clicked()), this, SLOT(creatSongSheetClicked()));
@@ -58,8 +59,9 @@ MainWindow::MainWindow(QWidget *parent)
         SongSheet* nss = new SongSheet(this);
         nss->name = "我喜欢的音乐";
         m_SongSheetList.append(nss);
+
         QPushButton *button = new QPushButton("我喜欢的音乐");
-        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);}");
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);border:none;}");
         m_leftTable->m_LeftTableModel->setItem(2, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(2, 0), button);
         connect(button, SIGNAL(clicked()), this, SLOT(mySongSheetClicked()));
@@ -208,6 +210,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_middleWheelPic->lower();
     m_middleWheelPic->hide();
     m_middleMusicShow->lower();
+
+
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
