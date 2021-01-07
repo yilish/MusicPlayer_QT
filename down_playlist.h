@@ -32,6 +32,7 @@ public:
         m_PlayListModel->setItem(row, 1, new QStandardItem("   X"));
         return true;
     }
+    QString name = "Local";
 };
 
 #endif // DOWN_PLAYLIST_H

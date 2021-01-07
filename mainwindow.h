@@ -24,7 +24,7 @@
 #include <QList>
 #include "lyricline.h"
 #include "songsheet.h"
-
+#include <QInputDialog>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -66,6 +66,7 @@ private slots:
     void playListChange();
     void closeMainwindow();
     void LocalListClick();
+    void LeftTableClick();
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);

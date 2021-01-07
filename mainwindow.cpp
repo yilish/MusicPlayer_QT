@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_downWidget = new QWidget(this);
     setDownWidget(m_downWidget);
 
-
     //左侧菜单初始化
     m_leftWidget = new QWidget(this);
     setLeftWidget();
@@ -147,7 +146,6 @@ MainWindow::MainWindow(QWidget *parent)
             m_LocalMusic->addLocalSong(s);
         }
     }
-    m_LocalMusic->Show();
 
 
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
@@ -174,6 +172,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
     connect(m_showPlayList->m_PlayList, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(playListChange()));
+    connect(m_LocalMusic->m_SongSheet, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LocalListClick()));
+    connect(m_leftTable->m_LeftTable, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LeftTableClick()));
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
 
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
@@ -756,7 +756,6 @@ void MainWindow::playListChange()
 {
     int row = m_showPlayList->m_PlayList->currentIndex().row();
     int col = m_showPlayList->m_PlayList->currentIndex().column();
-    qDebug() << row << col;
     if(col == 0)
     {
         QModelIndex index = m_showPlayList->m_PlayListModel->index(row,0);
@@ -792,9 +791,50 @@ void MainWindow::playListChange()
         }
         m_mediaPlayList->removeMedia(row);
         m_showPlayList->m_PlayListModel->removeRow(row);
+        m_showPlayList->name = "";
     }
 }
-
+void MainWindow::LeftTableClick()
+{
+    int row = m_leftTable->m_LeftTable->currentIndex().row();
+    if(row == 0)
+    {
+        foreach(SongSheet* ss, m_SongSheetList) ss->hide();
+        if(m_LocalMusic->isVisible()) m_LocalMusic->hide();
+        else m_LocalMusic->Show();
+    }
+    else if(row == 1)
+    {
+        bool ok;
+        QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),tr("请输入歌单名称:"), QLineEdit::Normal,QDir::home().dirName(), &ok);
+        foreach(SongSheet* ss, m_SongSheetList)
+        {
+            if(ss->name == text)
+            {
+                qDebug() << "same song sheet name";
+                return;
+            }
+        }
+        SongSheet* nss = new SongSheet(this);
+        nss->name = text;
+        m_SongSheetList.append(nss);
+        m_leftTable->addSheet(text);
+    }
+    else if(row > 1)
+    {
+        m_LocalMusic->hide();
+        if(m_SongSheetList.at(row - 2)->isVisible()) m_SongSheetList.at(row - 2)->hide();
+        else
+        {
+            foreach(SongSheet* ss, m_SongSheetList)
+            {
+                ss->hide();
+            }
+            SongSheet* ss = m_SongSheetList.at(row - 2);
+            ss->Show();
+        }
+    }
+}
 void MainWindow::LocalListClick()
 {
     int row = m_LocalMusic->m_SongSheet->currentIndex().row();
@@ -805,7 +845,31 @@ void MainWindow::LocalListClick()
     }
     else
     {
-
+        if(m_showPlayList->name == "Local")
+        {
+            QModelIndex index = m_LocalMusic->m_SongSheetModel->index(row,1);
+            QString name = m_LocalMusic->m_SongSheetModel->data(index).toString();
+            index = m_LocalMusic->m_SongSheetModel->index(row,2);
+            QString artist = m_LocalMusic->m_SongSheetModel->data(index).toString();
+            QString songdir = m_database.querySong(name + "-" + artist);
+            QString lyrdir = m_database.queryLyr(name + "-" + artist);
+            if(songdir == "")
+            {
+                qDebug() << "No url existed!";
+                m_mediaPlayList->removeMedia(row);
+            }
+            qDebug() << m_lyricLoader.loadFromFile(lyrdir);
+            auto ly = m_lyricLoader.getAllLine();
+            m_lyricwindow->getLyric(ly);
+            m_mediaPlayList->setCurrentIndex(row);
+            m_mediaPlayer->play();
+            m_downPlayWidget->m_btnPlay->setChecked(true);
+            updateMusicWidget();
+        }
+        else
+        {
+            m_showPlayList->name = "Local";
+        }
     }
 }
 

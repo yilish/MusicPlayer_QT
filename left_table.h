@@ -24,6 +24,11 @@ public:
     explicit Left_Table(QWidget *parent = 0);
     QTableView *m_LeftTable;
     QStandardItemModel *m_LeftTableModel;
+    void addSheet(QString name)
+    {
+        int row = m_LeftTableModel->rowCount();
+        m_LeftTableModel->setItem(row, 0, new QStandardItem(name));
+    }
 };
 
 #endif // LEFT_TABLE_H
