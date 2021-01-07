@@ -91,7 +91,9 @@ DISTFILES += \
     images/pause.jpg \
     images/pause.png \
     images/play.png \
-    images/play_pressed.png \
+    images/play_pressed.png \ \
+    images/txy2.png \
+    images/wangyiyunicon.png
 
 
 RESOURCES += \

@@ -36,7 +36,7 @@ Left_musicShowWidget::Left_musicShowWidget(QWidget *parent) {
     m_lblArtist->setPalette(pal0);
     m_lblAlbum->setFont(font1);
     m_lblAlbum->setPalette(pal0);
-    m_lblSong->setText("网易云音乐");
+    m_lblSong->setText("同心云音乐");
     m_lblSong->setGeometry(650,75,300,45);
 
     //m_lblSong->setFont(songFt);
@@ -74,7 +74,7 @@ void Left_musicShowWidget::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.save();
-    auto pix2 = QPixmap(":/images/images/greybgc.png");
+    auto pix2 = QPixmap(":/images/images/mmmmm.jpg");
     painter.drawPixmap(0,0,1300,661,pix2);
     painter.restore();
     painter.save();

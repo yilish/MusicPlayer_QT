@@ -42,12 +42,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     {
         QPushButton *button = new QPushButton("本地音乐");
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);}");
         m_leftTable->m_LeftTableModel->setItem(0, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(0, 0), button);
         connect(button, SIGNAL(clicked()), this, SLOT(myMusicClicked()));
     }
     {
-        QPushButton *button = new QPushButton("创建的歌单                               ");
+        QPushButton *button = new QPushButton("创建的歌单");
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei';text-align:left;font-size:14px; color:rgb(214, 214, 214);}");
         m_leftTable->m_LeftTableModel->setItem(1, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(1, 0), button);
         connect(button, SIGNAL(clicked()), this, SLOT(creatSongSheetClicked()));
@@ -57,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
         nss->name = "我喜欢的音乐";
         m_SongSheetList.append(nss);
         QPushButton *button = new QPushButton("我喜欢的音乐");
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);}");
         m_leftTable->m_LeftTableModel->setItem(2, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(2, 0), button);
         connect(button, SIGNAL(clicked()), this, SLOT(mySongSheetClicked()));
@@ -84,11 +87,12 @@ MainWindow::MainWindow(QWidget *parent)
     m_topSearchWidget->setGeometry(348, 20, 360, 48);
 
     m_lblLogo = new QLabel(m_topWidget);
-    QPixmap pix("D:/DSproj/MusicPlayer/images/wangyiyunicon.png");
+    QPixmap pix(":/images/txy2.png");
 
     m_lblLogo->setPixmap(pix);
-    qDebug() << pix.width() << pix.height();
-    m_lblLogo->setGeometry(0,0,pix.width(),pix.height());
+    m_lblLogo->setPixmap(m_lblLogo->pixmap()->scaled(QSize(255, 65), Qt::KeepAspectRatio));
+    //qDebug() << pix.width() << pix.height();
+    m_lblLogo->setGeometry(0,0,255,65);
     m_lblLogo->show();
     m_lblLogo->raise();
     //搜索栏初始化
@@ -186,7 +190,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_downProgressBar->update();
     //连接信号与槽
     m_middleWheelPic = new Middle_WheelPic(this);
-    m_middleWheelPic->setGeometry(500, 170, 800, 500);
+    m_middleWheelPic->setGeometry(450, 130, 800, 800);
+
+    m_middleWheelPic->lower();
+    m_middleWheelPic->hide();
+    m_middleMusicShow->lower();
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
@@ -200,7 +208,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(onPositionChanged(qint64)));
     connect(m_mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(onDurationChanged(qint64)));
-    connect(m_mediaPlayer, SIGNAL(currentMediaChanged(QMediaContent)), this, SLOT(updateMusicShowWidget(QMediaContent)));
+
+
+
+    //connect(m_mediaPlayer, SIGNAL(currentMediaChanged(QMediaContent)), this, SLOT(updateMusicShowWidget(QMediaContent)));
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
     connect(m_showPlayList->m_PlayList, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(playListChange()));
@@ -218,30 +229,71 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updateMusicShowWidget(QMediaContent curMedia) {
-    //qDebug() << curMedia.canonicalUrl();
-//    QMediaContent tmp = m_mediaPlayer->currentMedia();
-//    QString s = tmp.canonicalUrl().toString();
-//    QString ss;
-//    for(int i=8;i<s.length();i++)
-//    {
-//        ss+=s[i];
-//    }
-//    qDebug() << ss;
-//    Song song = m_database.querySongInfo(ss);
-//    qDebug() << song.getId()
-//             << song.getName()
-//             << song.getArtist()
-//             << song.getNameArtist()
-//             << song.getAlbumName();
-    //m_leftMusicShowWidget->setSong(&song);
+    if (!(m_mediaPlayList->previousIndex(2) == m_mediaPlayList->currentIndex())) {
+        auto prePreUrl = m_mediaPlayList->media(m_mediaPlayList->previousIndex(2)).canonicalUrl().toString();
+        QString ss;
+        for(int i=8;i<prePreUrl.length();i++)
+        {
+            ss+=prePreUrl[i];
+        }
+        //qDebug() << ss;
+        Song song = m_database.querySongInfo(ss);
+        m_middleWheelPic->m_lblPrevPrev->setPixmap(QPixmap(song.getImageUrl()).scaled(400, 400, Qt::KeepAspectRatio));
+    }
+    else {
+        m_middleWheelPic->m_lblPrevPrev->setPixmap(QPixmap());
+    }
+
+    if (!(m_mediaPlayList->previousIndex() == m_mediaPlayList->currentIndex())) {
+        auto preUrl = m_mediaPlayList->media(m_mediaPlayList->previousIndex()).canonicalUrl().toString();
+        QString ss;
+        for(int i=8;i<preUrl.length();i++)
+        {
+            ss+=preUrl[i];
+        }
+        //qDebug() << ss;
+        Song song = m_database.querySongInfo(ss);
+        m_middleWheelPic->m_lblPrev->setPixmap(QPixmap(song.getImageUrl()).scaled(400, 400, Qt::KeepAspectRatio));
+    }
+    else {
+        m_middleWheelPic->m_lblPrev->setPixmap(QPixmap());
+    }
+    QMediaContent tmp = m_mediaPlayer->currentMedia();
+    if (!tmp.isNull())
+    {
+        QString s = tmp.canonicalUrl().toString();
+        QString ss;
+        for(int i=8;i<s.length();i++)
+        {
+            ss+=s[i];
+        }
+        //qDebug() << ss;
+        Song song = m_database.querySongInfo(ss);
+        m_middleWheelPic->m_lblCur->setPixmap(QPixmap(song.getImageUrl()).scaled(400, 400, Qt::KeepAspectRatio));
+        m_leftMusicShowWidget->setSong(&song);
+        m_leftBtnFullScreen->setSong(&song);
+        m_leftMusicShowWidget->m_tmrUpdate->start();
+        m_leftMusicShowWidget->m_tmrUpdateNew->start();
+        m_lyricLoader.loadFromFile(song.getLyricUrl());
+        auto ly = m_lyricLoader.getAllLine();
+        m_lyricwindow->getLyric(ly);
+    }
+
 }
+
+
+
 
 void MainWindow::updateMusicWidget() {
     if (m_downPlayWidget->m_btnPlay->isChecked()) {
         //播放列表空否？
         if (!m_mediaPlayList->isEmpty()) {
             m_mediaPlayer->play();
-
+            m_middleMusicShow->m_lblImage->setPixmap(QPixmap(":/images/greybgc.png"));
+            if (!m_middleWheelPic->isVisible()) {
+                m_middleWheelPic->show();
+                updateMusicShowWidget(m_mediaPlayList->currentMedia());
+            }
             QMediaContent tmp = m_mediaPlayer->currentMedia();
             QString s = tmp.canonicalUrl().toString();
             QString ss;
@@ -251,6 +303,7 @@ void MainWindow::updateMusicWidget() {
             }
             //qDebug() << ss;
             Song song = m_database.querySongInfo(ss);
+
             m_leftMusicShowWidget->setSong(&song);
             m_leftBtnFullScreen->setSong(&song);
             m_leftMusicShowWidget->m_tmrUpdate->start();
@@ -280,8 +333,10 @@ void MainWindow::playNextSong() {
     if (m_mediaPlayList->isEmpty()) {
         return;
     }
+
     auto nextIndex = m_mediaPlayList->nextIndex();
     m_mediaPlayList->setCurrentIndex(nextIndex);
+    updateMusicShowWidget(m_mediaPlayList->currentMedia());
 //    auto nextIndex = (m_mediaPlayList->currentIndex() + 1) % m_mediaPlayList->mediaCount();
 //    // calculate the index of next song by mod the max size of total media.
 //    m_mediaPlayList->setCurrentIndex(nextIndex);
@@ -315,6 +370,7 @@ void MainWindow::playPrevSong() {
     auto nextIndex = m_mediaPlayList->previousIndex();
     // calculate the index of next song by mod the max size of total media.
     m_mediaPlayList->setCurrentIndex(nextIndex);
+    updateMusicShowWidget(m_mediaPlayList->currentMedia());
     qDebug() << m_mediaPlayList->currentIndex();
     if (! m_downPlayWidget->m_btnPlay->isChecked()) {
         m_downPlayWidget->m_btnPlay->setChecked(true);
@@ -408,6 +464,10 @@ void MainWindow::onPositionChanged(qint64 position) {
         m_tPosition = QString::asprintf("%d:%d", min, sec);
     }
     m_downProgressBar->m_lblLeft->setText(m_tPosition);
+    if (position == 0) {
+        updateMusicShowWidget(m_mediaPlayList->currentMedia());
+
+    }
 }
 
 void MainWindow::setDownWidget(QWidget *widget) {
@@ -896,6 +956,7 @@ void MainWindow::creatSongSheetClicked()
         nss->name = text;
         m_SongSheetList.append(nss);
         QPushButton *button = new QPushButton(text);
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);}");
         int row = m_leftTable->m_LeftTableModel->rowCount();
         m_leftTable->m_LeftTableModel->setItem(row, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(row, 0), button);

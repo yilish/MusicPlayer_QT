@@ -21,10 +21,10 @@ class Middle_WheelPic : public QWidget
 public:
     Middle_WheelPic(QWidget* parent);
     //void paintEvent(QPaintEvent *event);
-    QPixmap m_pixPrev;
-    QPixmap m_pixCur;
-    QPixmap m_pixNext;
-    QPushButton* m_btnRight;
+
+    QLabel* m_lblCur;
+    QLabel* m_lblPrev;
+    QLabel* m_lblPrevPrev;
     //QImage m_imgPrev;
 };
 

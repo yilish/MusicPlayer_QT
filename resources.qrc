@@ -81,5 +81,15 @@
     <qresource prefix="/">
         <file>images/greybgc.png</file>
         <file>downloadBarStyle.qss</file>
+        <file>images/wangyiyunicon.png</file>
+        <file>images/txy.png</file>
+        <file>images/txy1.png</file>
+        <file>images/txy2.png</file>
+        <file>images/tjjd.png</file>
+        <file>images/tjjd.jpg</file>
+        <file>images/earphone.png</file>
+        <file>images/earphone1.png</file>
+        <file>images/tjjd1.png</file>
+        <file>images/TJnight.png</file>
     </qresource>
 </RCC>
