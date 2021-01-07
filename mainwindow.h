@@ -67,6 +67,11 @@ private slots:
     void closeMainwindow();
     void LocalListClick();
     void LeftTableClick();
+    void removeBtnClicked();
+    void myMusicClicked();
+    void creatSongSheetClicked();
+    void mySongSheetClicked();
+    void likeBtnClicked();
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
@@ -141,6 +146,7 @@ private:
     LyricWindow* m_lyricwindow;
     SongSheet* m_LocalMusic;
     QList<SongSheet*> m_SongSheetList;
+    QList<QString> m_likes;
 
 };
 #endif // MAINWINDOW_H
