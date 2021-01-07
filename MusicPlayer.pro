@@ -3,7 +3,7 @@ QT       += core gui \
 QT       += multimedia
 QT += sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+RC_ICONS = txy1.ico
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -34,6 +34,7 @@ SOURCES += \
     mainwindow.cpp \
     middle_musicshow.cpp \
     middle_searchresult.cpp \
+    middle_wheelpic.cpp \
     myslider.cpp \
     qssparser.cpp \
     searchboxproxystyle.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
     mainwindow.h \
     middle_musicshow.h \
     middle_searchresult.h \
+    middle_wheelpic.h \
     myslider.h \
     qssparser.h \
     searchboxproxystyle.h \
@@ -81,6 +83,7 @@ DISTFILES += \
     images/before.png \
     images/before_normal.png \
     images/before_pressed.png \
+    images/greybgc.png \
     images/mute.jpg \
     images/next.png \
     images/next_normal.png \
@@ -88,7 +91,10 @@ DISTFILES += \
     images/pause.jpg \
     images/pause.png \
     images/play.png \
-    images/play_pressed.png \
+    images/play_pressed.png \ \
+    images/txy1.png \
+    images/txy2.png \
+    images/wangyiyunicon.png
 
 
 RESOURCES += \

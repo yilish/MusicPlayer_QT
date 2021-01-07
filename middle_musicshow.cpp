@@ -11,9 +11,9 @@ Middle_musicShow::Middle_musicShow(QWidget *parent) {
     show();
 
     QPixmap pix;
-    pix.load(":/images/images/mmmmm.jpg");
+    pix.load(":/images/TJnight.png");
     m_lblImage = new QLabel(this);
-    m_lblImage->setPixmap(pix);
+    m_lblImage->setPixmap(pix.scaled(1050, 661, Qt::KeepAspectRatioByExpanding));
     m_lblImage->setGeometry(0,0,1050,661);
 
 }

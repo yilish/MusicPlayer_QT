@@ -1,5 +1,6 @@
 #include "down_playlist.h"
 #include <QPalette>
+#include "searchboxproxystyle.h"
 Down_PlayList::Down_PlayList(QWidget *parent) : QWidget(parent)
 {
     this->hide();
@@ -24,7 +25,12 @@ Down_PlayList::Down_PlayList(QWidget *parent) : QWidget(parent)
     m_PlayList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_PlayList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_PlayList->setAlternatingRowColors(true);
-    m_PlayList->setStyleSheet("background-color:grey");
-
+    m_PlayList->setStyleSheet("background-color:rgb(43,43,43); selection-background-color:rgb(51,51,51);QTableView::item:hover {background: rgb(51, 51, 51);}");
+    m_PlayList->setFocusPolicy(Qt::NoFocus);
+    m_PlayList->setFrameShape(QFrame::NoFrame);
+    m_PlayList->horizontalHeader()->setStyleSheet("QHeaderView::section {border: none;border-right: none;border-bottom: none;"
+                                                    "color: rgb(214, 214, 214);background-color: rgb(51, 51, 51)}");
+    //setAutoFillBackground(true);
     m_PlayList->horizontalHeader()->setDisabled(true);
+    //setStyle(new SearchBoxProxyStyle);
 }

@@ -28,6 +28,7 @@ public:
     {
         int row = m_LeftTableModel->rowCount();
         m_LeftTableModel->setItem(row, 0, new QStandardItem(name));
+        m_LeftTableModel->item(row, 0)->setForeground(QBrush(QColor(214, 214, 214)));
     }
 };
 

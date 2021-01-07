@@ -28,6 +28,14 @@ public:
     {
         int row=m_PlayListModel->rowCount();
         m_PlayListModel->setItem(row, 0, new QStandardItem(name));
+        m_PlayListModel->item(row, 0)->setBackground(QColor(43,43,43));
+
+
+        auto ft = m_PlayListModel->item(row, 0)->font();
+        ft.setFamily("Microsoft yahei");
+        m_PlayListModel->item(row, 0)->setFont(ft);
+        m_PlayListModel->item(row, 0)->setForeground(QColor(213,207,177));
+
         return true;
     }
     QString name = "Local";

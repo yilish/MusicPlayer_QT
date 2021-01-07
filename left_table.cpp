@@ -20,4 +20,11 @@ Left_Table::Left_Table(QWidget *parent) : QWidget(parent)
     m_LeftTable->setAlternatingRowColors(true);
     m_LeftTable->horizontalHeader()->setDisabled(true);
     //tableWidget->horizontalHeader()->setDisabled(true);
+    m_LeftTable->setStyleSheet("background-color:rgba(51,51,51);\
+                                ");
+    m_LeftTable->setFocusPolicy(Qt::NoFocus);
+    m_LeftTable->setFrameShape(QFrame::NoFrame);
+    m_LeftTable->horizontalHeader()->setStyleSheet("QHeaderView::section {border:none;font-size: 30px;"
+                                                                       "color: rgb(214, 214, 214);background-color: rgb(51, 51, 51)}");
+
 }

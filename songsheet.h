@@ -34,6 +34,15 @@ public:
         m_SongSheetModel->setItem(row, 3, new QStandardItem(s.getArtist()));
         m_SongSheetModel->setItem(row, 4, new QStandardItem(s.getAlbumName()));
         m_SongSheetModel->setItem(row, 5, new QStandardItem("X"));
+        for (int i = 0; i < 6; i++) {
+            m_SongSheetModel->item(row, i)->setBackground(QColor(43,43,43));
+            m_SongSheetModel->item(row, i)->setForeground(QColor(213,207,177));
+            auto ft = m_SongSheetModel->item(row, i)->font();
+            ft.setFamily("Microsoft yahei");
+
+            m_SongSheetModel->item(row, i)->setFont(ft);
+
+        }
         return true;
     }
     bool addLocalSong(Song s)
@@ -46,6 +55,13 @@ public:
         m_SongSheetModel->setItem(row, 3, new QStandardItem(s.getArtist()));
         m_SongSheetModel->setItem(row, 4, new QStandardItem(s.getAlbumName()));
         m_SongSheetModel->setItem(row, 5, new QStandardItem("+"));
+        for (int i = 0; i < 6; i++) {
+            m_SongSheetModel->item(row, i)->setBackground(QColor(43,43,43));
+            m_SongSheetModel->item(row, i)->setForeground(QColor(213,207,177));
+            auto ft = m_SongSheetModel->item(row, i)->font();
+            ft.setFamily("Microsoft yahei");
+            m_SongSheetModel->item(row, i)->setFont(ft);
+        }
         return true;
     }
     void Show();
