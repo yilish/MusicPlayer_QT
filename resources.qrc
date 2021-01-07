@@ -91,5 +91,7 @@
         <file>images/earphone1.png</file>
         <file>images/tjjd1.png</file>
         <file>images/TJnight.png</file>
+        <file>images/love.png</file>
+        <file>images/love-grey.png</file>
     </qresource>
 </RCC>

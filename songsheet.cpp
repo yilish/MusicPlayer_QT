@@ -13,6 +13,7 @@ SongSheet::SongSheet(QWidget *parent) : QWidget(parent)
     m_SongSheetModel->setHorizontalHeaderItem(4, new QStandardItem(QObject::tr("专辑")));
     m_SongSheetModel->setHorizontalHeaderItem(5, new QStandardItem(QObject::tr("")));
     m_SongSheetModel->setColumnCount(6);
+
     //m_PlayListModel->setItem(0, 0, new QStandardItem("1"));
     //m_PlayListModel->setItem(1, 0, new QStandardItem("2"));
 
@@ -30,9 +31,15 @@ SongSheet::SongSheet(QWidget *parent) : QWidget(parent)
     m_SongSheet->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_SongSheet->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_SongSheet->setAlternatingRowColors(true);
-    m_SongSheet->setStyleSheet("background-color:gray");
-
+    //m_SongSheet->setStyleSheet("background-color:rgb(43,43,43)");
+    m_SongSheet->horizontalHeader()->setStyleSheet("QHeaderView::section {border: none;border-right: none;border-bottom: none;"
+                                                                       "color: rgb(214, 214, 214);background-color: rgb(51, 51, 51)}");
     m_SongSheet->horizontalHeader()->setDisabled(true);
+    m_SongSheet->setStyleSheet("background-color:rgb(43,43,43); selection-background-color:rgb(51,51,51); QTableView::item:hover {background: rgb(51, 51, 51);}");
+    m_SongSheet->setFocusPolicy(Qt::NoFocus);
+    m_SongSheet->setFrameShape(QFrame::NoFrame);
+    m_SongSheet->setShowGrid(false);
+
 }
 
 void SongSheet::Show()

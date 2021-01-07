@@ -168,14 +168,27 @@ MainWindow::MainWindow(QWidget *parent)
         while(query.next())
         {
             m_showPlayList->addSong(query.value(0).toString());
-            QPushButton *button = new QPushButton("X");
+            QPushButton *button = new QPushButton();
+            button->setCursor(Qt::PointingHandCursor);
+            button->setToolTip(QString("删除这首歌"));
+
+            button->setStyleSheet("QPushButton{background:rgb(43,43,43);border:0px;}\
+                                           QPushButton{image:url(:/images/images/close_normal.png)}\
+                                           QPushButton:hover{image:url(:/images/images/close_pressed.png);}");
             int row=m_showPlayList->m_PlayListModel->rowCount() - 1;
             m_showPlayList->m_PlayList->setIndexWidget(m_showPlayList->m_PlayListModel->index(row, 1), button);
             connect(button, SIGNAL(clicked()), this, SLOT(removeBtnClicked()));
             m_mediaPlayList->addMedia(QUrl::fromLocalFile(query.value(1).toString()));
             Song s = m_database.querySongInfo(m_database.querySong(query.value(0).toString()));
             m_LocalMusic->addLocalSong(s);
-            QPushButton *but = new QPushButton("♥");
+            QPushButton *but = new QPushButton();
+            but->setCursor(Qt::PointingHandCursor);
+            but->setToolTip(QString("喜欢"));
+
+            but->setStyleSheet("QPushButton{background:rgb(43,43,43);border:0px;}\
+                                                                  QPushButton{image:url(:/images/love-grey.png)}\
+                                                                  QPushButton:checked{image:url(:/images/love.png);}");
+            but->setGeometry(0, 0, 25, 25);
             int ro=m_LocalMusic->m_SongSheetModel->rowCount() - 1;
             m_LocalMusic->m_SongSheet->setIndexWidget(m_LocalMusic->m_SongSheetModel->index(ro, 1), but);
             connect(but, SIGNAL(clicked()), this, SLOT(removeBtnClicked()));
@@ -222,6 +235,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
 
     m_middleWheelPic->m_lblPrev->installEventFilter(this);
+    m_lblLogo->installEventFilter(this);
 }
 
 MainWindow::~MainWindow() {
@@ -790,6 +804,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
                 QPushButton *button = new QPushButton("X");
                 int row=m_showPlayList->m_PlayListModel->rowCount() - 1;
                 m_showPlayList->m_PlayList->setIndexWidget(m_showPlayList->m_PlayListModel->index(row, 1), button);
+
                 connect(button, SIGNAL(clicked()), this, SLOT(removeBtnClicked()));
                 QString songdir = m_database.querySong(name);
                 m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
@@ -1055,8 +1070,16 @@ void MainWindow::LocalListClick()
                 QString artist = m_LocalMusic->m_SongSheetModel->data(index).toString();
                 QString songdir = m_database.querySong(name + "-" + artist);
                 m_showPlayList->addSong(name + "-" + artist);
-                QPushButton *button = new QPushButton("X");
+                QPushButton *button = new QPushButton();
                 int row=m_showPlayList->m_PlayListModel->rowCount() - 1;
+
+                button->setCursor(Qt::PointingHandCursor);
+                button->setToolTip(QString("删除这首歌"));
+
+                button->setStyleSheet("QPushButton{background:rgb(50,50,50);border:0px;}\
+                                               QPushButton{image:url(:/images/images/close_normal.png)}\
+                                               QPushButton:hover{image:url(:/images/images/close_pressed.png);}");
+
                 m_showPlayList->m_PlayList->setIndexWidget(m_showPlayList->m_PlayListModel->index(row, 1), button);
                 connect(button, SIGNAL(clicked()), this, SLOT(removeBtnClicked()));
                 m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
@@ -1110,7 +1133,12 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
         return true;
     }
 
+    if(qobject_cast<QLabel*>(obj) == m_lblLogo &&event->type() == QEvent::MouseButtonRelease)
+    {
+        qDebug() << "logo is pressed !";
 
+        return true;
+    }
 
     return false;
 
