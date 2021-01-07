@@ -29,10 +29,11 @@ public:
         int row=m_SongSheetModel->rowCount();
         QString r = QString::number(row + 1);
         m_SongSheetModel->setItem(row, 0, new QStandardItem(r));
-        m_SongSheetModel->setItem(row, 1, new QStandardItem(s.getName()));
-        m_SongSheetModel->setItem(row, 2, new QStandardItem(s.getArtist()));
-        m_SongSheetModel->setItem(row, 3, new QStandardItem(s.getAlbumName()));
-        m_SongSheetModel->setItem(row, 4, new QStandardItem("X"));
+        m_SongSheetModel->setItem(row, 1, new QStandardItem(""));
+        m_SongSheetModel->setItem(row, 2, new QStandardItem(s.getName()));
+        m_SongSheetModel->setItem(row, 3, new QStandardItem(s.getArtist()));
+        m_SongSheetModel->setItem(row, 4, new QStandardItem(s.getAlbumName()));
+        m_SongSheetModel->setItem(row, 5, new QStandardItem("X"));
         return true;
     }
     bool addLocalSong(Song s)
@@ -40,10 +41,11 @@ public:
         int row=m_SongSheetModel->rowCount();
         QString r = QString::number(row + 1);
         m_SongSheetModel->setItem(row, 0, new QStandardItem(r));
-        m_SongSheetModel->setItem(row, 1, new QStandardItem(s.getName()));
-        m_SongSheetModel->setItem(row, 2, new QStandardItem(s.getArtist()));
-        m_SongSheetModel->setItem(row, 3, new QStandardItem(s.getAlbumName()));
-        m_SongSheetModel->setItem(row, 4, new QStandardItem("+"));
+        m_SongSheetModel->setItem(row, 1, new QStandardItem(""));
+        m_SongSheetModel->setItem(row, 2, new QStandardItem(s.getName()));
+        m_SongSheetModel->setItem(row, 3, new QStandardItem(s.getArtist()));
+        m_SongSheetModel->setItem(row, 4, new QStandardItem(s.getAlbumName()));
+        m_SongSheetModel->setItem(row, 5, new QStandardItem("+"));
         return true;
     }
     void Show();

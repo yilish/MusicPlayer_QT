@@ -24,7 +24,7 @@ Down_PlayList::Down_PlayList(QWidget *parent) : QWidget(parent)
     m_PlayList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_PlayList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_PlayList->setAlternatingRowColors(true);
-    m_PlayList->setStyleSheet("background-color:gray");
+    m_PlayList->setStyleSheet("background-color:grey");
 
     m_PlayList->horizontalHeader()->setDisabled(true);
 }
