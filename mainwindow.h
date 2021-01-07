@@ -24,6 +24,9 @@
 #include <QList>
 #include "lyricline.h"
 #include "songsheet.h"
+#include "middle_wheelpic.h"
+
+
 #include <QInputDialog>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -68,6 +71,7 @@ private slots:
     void LocalListClick();
     void LeftTableClick();
 private:
+    //void keyPressEvent(QKeyEvent *event);
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
     void createRedLine();
@@ -104,6 +108,7 @@ private:
     Down_PlayListButton* m_downBtnPlayList;   //播放列表按钮
     Down_PlayList* m_showPlayList;  //显示播放列表
     Middle_musicShow* m_middleMusicShow;
+    Middle_WheelPic* m_middleWheelPic;
     Left_musicShowWidget* m_leftMusicShowWidget;
     Left_MusicButton* m_leftBtnFullScreen;
 

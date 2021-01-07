@@ -125,10 +125,9 @@ void Left_musicShowWidget::paintEvent(QPaintEvent *event)
 
 void Left_musicShowWidget::setSong(Song *song)
 {
-    this->m_lblArtist->setText(song->getNameArtist());
+    this->m_lblArtist->setText(song->getArtist());
     this->m_lblAlbum->setText(song->getAlbumName());
     this->m_lblSong->setText(song->getName());
-    qDebug() << song->getImageUrl();
 
     if (m_albumCover.load(song->getImageUrl())) {
 

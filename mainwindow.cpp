@@ -154,7 +154,8 @@ MainWindow::MainWindow(QWidget *parent)
     //auto durTime = m_mediaPlayer->position();
     m_downProgressBar->update();
     //连接信号与槽
-
+    m_middleWheelPic = new Middle_WheelPic(this);
+    m_middleWheelPic->setGeometry(500, 170, 800, 500);
     connect(m_downPlayWidget->m_btnPlay, SIGNAL(clicked(bool)), this, SLOT(updateMusicWidget()));
     connect(m_downPlayWidget->m_btnNextSong, SIGNAL(clicked(bool)), this, SLOT(playNextSong()));
     connect(m_downPlayWidget->m_btnPrevSong, SIGNAL(clicked(bool)), this, SLOT(playPrevSong()));
@@ -248,9 +249,12 @@ void MainWindow::playNextSong() {
     if (m_mediaPlayList->isEmpty()) {
         return;
     }
-    auto nextIndex = (m_mediaPlayList->currentIndex() + 1) % m_mediaPlayList->mediaCount();
-    // calculate the index of next song by mod the max size of total media.
+    auto nextIndex = m_mediaPlayList->nextIndex();
     m_mediaPlayList->setCurrentIndex(nextIndex);
+//    auto nextIndex = (m_mediaPlayList->currentIndex() + 1) % m_mediaPlayList->mediaCount();
+//    // calculate the index of next song by mod the max size of total media.
+//    m_mediaPlayList->setCurrentIndex(nextIndex);
+
     if (! m_downPlayWidget->m_btnPlay->isChecked()) {
         m_downPlayWidget->m_btnPlay->setChecked(true);
         m_mediaPlayer->play();
@@ -277,9 +281,10 @@ void MainWindow::playPrevSong() {
     if (m_mediaPlayList->isEmpty()) {
         return;
     }
-    auto nextIndex = (m_mediaPlayList->currentIndex() - 1) % m_mediaPlayList->mediaCount();
+    auto nextIndex = m_mediaPlayList->previousIndex();
     // calculate the index of next song by mod the max size of total media.
     m_mediaPlayList->setCurrentIndex(nextIndex);
+    qDebug() << m_mediaPlayList->currentIndex();
     if (! m_downPlayWidget->m_btnPlay->isChecked()) {
         m_downPlayWidget->m_btnPlay->setChecked(true);
         m_mediaPlayer->play();
@@ -730,11 +735,12 @@ void MainWindow::playmodeChanged() {
     m_playMode = (m_playMode + 1) % 3;
     qDebug() << m_playMode;
     if (m_playMode == 0) {
-        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Sequential);
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
 
         m_downPlayWidget->m_btnPlayMode->setToolTip("顺序播放");
         m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem2.png)}");
         m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 25, 30, 20);
+
     }
 
     else if (m_playMode == 1) {
@@ -745,7 +751,7 @@ void MainWindow::playmodeChanged() {
     }
 
     else if (m_playMode == 2) {
-        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::Loop);
+        m_mediaPlayList->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
         m_downPlayWidget->m_btnPlayMode->setToolTip("单曲循环");
         m_downPlayWidget->m_btnPlayMode->setStyleSheet("QPushButton{border-image:url(:/images/images/comboxitem3.png)}");
         m_downPlayWidget->m_btnPlayMode->setGeometry(1120, 20, 35, 35);
@@ -835,6 +841,9 @@ void MainWindow::LeftTableClick()
         }
     }
 }
+
+
+
 void MainWindow::LocalListClick()
 {
     int row = m_LocalMusic->m_SongSheet->currentIndex().row();
@@ -902,6 +911,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
          m_pressed=false;
      }
 }
+
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
 }

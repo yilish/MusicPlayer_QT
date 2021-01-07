@@ -34,6 +34,7 @@ SOURCES += \
     mainwindow.cpp \
     middle_musicshow.cpp \
     middle_searchresult.cpp \
+    middle_wheelpic.cpp \
     myslider.cpp \
     qssparser.cpp \
     searchboxproxystyle.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
     mainwindow.h \
     middle_musicshow.h \
     middle_searchresult.h \
+    middle_wheelpic.h \
     myslider.h \
     qssparser.h \
     searchboxproxystyle.h \
@@ -81,6 +83,7 @@ DISTFILES += \
     images/before.png \
     images/before_normal.png \
     images/before_pressed.png \
+    images/greybgc.png \
     images/mute.jpg \
     images/next.png \
     images/next_normal.png \
