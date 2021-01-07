@@ -221,7 +221,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
 
-
+    m_middleWheelPic->m_lblPrev->installEventFilter(this);
 }
 
 MainWindow::~MainWindow() {
@@ -1100,6 +1100,20 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     Q_UNUSED(event);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if(qobject_cast<QLabel*>(obj) == m_middleWheelPic->m_lblPrev &&event->type() == QEvent::MouseButtonRelease)
+    {
+        playPrevSong();
+        return true;
+    }
+
+
+
+    return false;
+
 }
 
 void MainWindow::likeBtnClicked()

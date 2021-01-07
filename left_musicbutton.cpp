@@ -6,7 +6,7 @@ Left_MusicButton::Left_MusicButton(QWidget* parent)
     m_lblMusicName = new QLabel(this);
     QPalette pal1;
     pal1.setColor(QPalette::ButtonText,QColor(255,255,255));
-    QFont font("Courier",12);
+    QFont font("Microsoft YaHei",10);
     setCursor(Qt::PointingHandCursor);
     m_pix = QPixmap(":/images/txy.png");
     m_lblMusicName->setGeometry(70,10,150,40);

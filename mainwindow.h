@@ -152,6 +152,8 @@ private:
     SongSheet* m_LocalMusic;
     QList<SongSheet*> m_SongSheetList;
     QList<QString> m_likes;
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 
 };
 #endif // MAINWINDOW_H
