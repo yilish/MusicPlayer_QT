@@ -4,13 +4,11 @@
 #include <QObject>
 #include <QPointer>
 #include <QStringList>
-
+#include "lyricline.h"
 namespace QJson { class Parser; }
 
 class QNetworkAccessManager;
 class QNetworkReply;
-
-class LyricLine;
 
 class LyricLoader : public QObject
 {
@@ -34,6 +32,8 @@ public:
     QStringList lyric() const;
     bool hasTimer() const;
     bool loading() const;
+public:
+    QList<LyricLine*> getAllLine();
 
 signals:
     void lyricChanged();

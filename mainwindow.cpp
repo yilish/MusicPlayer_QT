@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_database.createConnection();
     m_database.createTable();
     qDebug() << QCoreApplication::applicationDirPath();
+    m_LocalMusic = new SongSheet(this);
 
 
     //UI设计
@@ -33,12 +34,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_downWidget = new QWidget(this);
     setDownWidget(m_downWidget);
 
-
     //左侧菜单初始化
     m_leftWidget = new QWidget(this);
     setLeftWidget();
-    //m_leftTable = new Left_Table(this);
-    //m_leftTable->setGeometry(0, 0, 300, 730);
+    m_leftTable = new Left_Table(this);
+    m_leftTable->setGeometry(0, 0, 300, 665);
     m_leftBtnFullScreen = new Left_MusicButton(m_leftWidget);
     m_leftBtnFullScreen->setGeometry(0,597,250,64);
     connect(m_leftBtnFullScreen,SIGNAL(clicked(bool)),this,SLOT(showMusicWidget()));
@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_leftMusicShowWidget = new Left_musicShowWidget(this);
     m_leftMusicShowWidget->setGeometry(0,730,0,0);
+
+    m_lyricwindow = new LyricWindow(m_leftMusicShowWidget);
+    m_lyricwindow->setGeometry(650, 200, 800, 600);
 
     //上边框初始化
     m_topWidget = new QWidget(this);
@@ -98,15 +101,6 @@ MainWindow::MainWindow(QWidget *parent)
     createRedLine();
     //歌词窗体QLabel
 
-    m_lyricWindow = new LyricWindow(m_leftMusicShowWidget);
-    QFont ft;
-    ft.setPointSize(12);
-    QPalette pa;
-    pa.setColor(QPalette::WindowText,Qt::red);
-    m_lyricWindow->setFont(ft);
-    m_lyricWindow->setPalette(pa);
-    m_lyricWindow->setGeometry(700, 200, 200, 200);
-
 
     m_searchResult = new Middle_searchResult(this);
     m_searchResult->setGeometry(348, 65, 330, 500);
@@ -121,15 +115,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_downBtnPlayList = new Down_PlayListButton(m_downWidget);
     m_downBtnPlayList->setGeometry(1220, 0, 180, 70);
     m_showPlayList = new Down_PlayList(this);
-    {
-        QSqlDatabase db = QSqlDatabase::database("QSQLITE");
-        QSqlQuery query(db);
-        query.exec(QString("select songartist from songlist"));
-        while(query.next())
-        {
-            m_showPlayList->addSong(query.value(0).toString());
-        }
-    }
+
 
 
     //init of play list
@@ -143,6 +129,24 @@ MainWindow::MainWindow(QWidget *parent)
     m_unMutedVol = 30;
     m_playMode = 0;
     //播放进度条初始化
+
+    //SongSheet * s = new SongSheet(this);
+    //s->setGeometry(250,69,1050,661);
+    //s->show();
+
+    {
+        QSqlDatabase db = QSqlDatabase::database("QSQLITE");
+        QSqlQuery query(db);
+        query.exec(QString("select songartist,songdir from songlist"));
+        while(query.next())
+        {
+            m_showPlayList->addSong(query.value(0).toString());
+            m_mediaPlayList->addMedia(QUrl::fromLocalFile(query.value(1).toString()));
+            Song s = m_database.querySongInfo(m_database.querySong(query.value(0).toString()));
+            m_LocalMusic->addLocalSong(s);
+        }
+    }
+
 
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
     m_downloadProgressBar->raise();
@@ -167,7 +171,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_mediaPlayer, SIGNAL(currentMediaChanged(QMediaContent)), this, SLOT(updateMusicShowWidget(QMediaContent)));
     connect(m_downProgressBar->m_sliderPlayProgress, SIGNAL(valueChanged(int)), this, SLOT(changePlayProgress(int)));
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
-    connect(m_showPlayList->m_PlayList, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(playChange()));
+    connect(m_showPlayList->m_PlayList, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(playListChange()));
+    connect(m_LocalMusic->m_SongSheet, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LocalListClick()));
+    connect(m_leftTable->m_LeftTable, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LeftTableClick()));
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
 
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
@@ -202,23 +208,6 @@ void MainWindow::updateMusicWidget() {
     if (m_downPlayWidget->m_btnPlay->isChecked()) {
         //播放列表空否？
         if (!m_mediaPlayList->isEmpty()) {
-            QStringList m_lyricList = m_lyricLoader.lyric();
-            QString allLyrics;
-            for(int i = 0; i< m_lyricList.size();++i)
-            {
-                //QString tmp = m_lyricList.at(i);
-                //qDebug() << tmp;
-                allLyrics +=m_lyricList.at(i)+"\n";
-                //m_lyricWindow->setText(m_lyricList.at(i));
-            }
-            QLabel *ly = new QLabel(allLyrics, this);
-            m_lyricWindow->setText(allLyrics);
-            m_lyricWindow->show();
-
-            /*ly->show();
-            ly->setGeometry(0,0,this->rect().width()/3,this->rect().height()/2);
-            ly->setScaledContents(true);*/
-            //m_lyricWindow->setGeometry(this->rect().width()/2,this->rect().height()/2,200,200);
             m_mediaPlayer->play();
 
             QMediaContent tmp = m_mediaPlayer->currentMedia();
@@ -228,17 +217,22 @@ void MainWindow::updateMusicWidget() {
             {
                 ss+=s[i];
             }
-            qDebug() << ss;
+            //qDebug() << ss;
             Song song = m_database.querySongInfo(ss);
             m_leftMusicShowWidget->setSong(&song);
             m_leftBtnFullScreen->setSong(&song);
             m_leftMusicShowWidget->m_tmrUpdate->start();
             m_leftMusicShowWidget->m_tmrUpdateNew->start();
+            if(m_downProgressBar->pos().x() <= 2000)
+            {
+                m_lyricLoader.loadFromFile(song.getLyricUrl());
+                auto ly = m_lyricLoader.getAllLine();
+                m_lyricwindow->getLyric(ly);
+            }
         }
     }
 
     else {
-        m_lyricWindow->hide();
         m_mediaPlayer->pause();
         m_leftMusicShowWidget->m_tmrUpdate->stop();
         m_leftMusicShowWidget->updateStick();
@@ -261,6 +255,22 @@ void MainWindow::playNextSong() {
         m_downPlayWidget->m_btnPlay->setChecked(true);
         m_mediaPlayer->play();
     }
+    QMediaContent tmp = m_mediaPlayer->currentMedia();
+    QString s = tmp.canonicalUrl().toString();
+    QString ss;
+    for(int i=8;i<s.length();i++)
+    {
+        ss+=s[i];
+    }
+    //qDebug() << ss;
+    Song song = m_database.querySongInfo(ss);
+    m_leftMusicShowWidget->setSong(&song);
+    m_leftBtnFullScreen->setSong(&song);
+    m_leftMusicShowWidget->m_tmrUpdate->start();
+    m_leftMusicShowWidget->m_tmrUpdateNew->start();
+    m_lyricLoader.loadFromFile(song.getLyricUrl());
+    auto ly = m_lyricLoader.getAllLine();
+    m_lyricwindow->getLyric(ly);
 }
 
 void MainWindow::playPrevSong() {
@@ -273,7 +283,24 @@ void MainWindow::playPrevSong() {
     if (! m_downPlayWidget->m_btnPlay->isChecked()) {
         m_downPlayWidget->m_btnPlay->setChecked(true);
         m_mediaPlayer->play();
+
     }
+    QMediaContent tmp = m_mediaPlayer->currentMedia();
+    QString s = tmp.canonicalUrl().toString();
+    QString ss;
+    for(int i=8;i<s.length();i++)
+    {
+        ss+=s[i];
+    }
+    //qDebug() << ss;
+    Song song = m_database.querySongInfo(ss);
+    m_leftMusicShowWidget->setSong(&song);
+    m_leftBtnFullScreen->setSong(&song);
+    m_leftMusicShowWidget->m_tmrUpdate->start();
+    m_leftMusicShowWidget->m_tmrUpdateNew->start();
+    m_lyricLoader.loadFromFile(song.getLyricUrl());
+    auto ly = m_lyricLoader.getAllLine();
+    m_lyricwindow->getLyric(ly);
 }
 
 void MainWindow::mute() {
@@ -333,7 +360,7 @@ void MainWindow::onPositionChanged(qint64 position) {
     if (m_downProgressBar->m_sliderPlayProgress->isSliderDown()) {
         return;
     }
-
+    m_lyricwindow->update(position);
     m_downProgressBar->m_sliderPlayProgress->setSliderPosition(position);
     int sec = position / 1000;      //秒数
     int min = sec / 60;
@@ -504,7 +531,6 @@ void MainWindow::showMinWindow()
 }
 
 void MainWindow::showMusicWidget() {
-    m_leftMusicShowWidget->show();
     QPropertyAnimation *animation=new QPropertyAnimation(m_leftMusicShowWidget,"geometry");
     animation->setDuration(300);
     animation->setStartValue(QRect(0,730,1300,0));
@@ -565,7 +591,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     id = strId;
     songName = objSong["name"].toString();
     artistName = getArtistName(objSong);
-    qDebug() << strId;
+    //qDebug() << strId;
     auto absPath = QApplication::applicationDirPath();
     auto dir = QApplication::applicationDirPath() + QString("/music/");
     createFolder(dir);
@@ -661,14 +687,15 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
         m_albumFile->close();
         qDebug() << "successfully downloaded the album cover.";
         //auto abname = albumObj.value("album").toString();
-        if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName, abname))
-        {
-            QString name = songName + "-" + artistName;
-            m_showPlayList->addSong(name);
-            QString songdir = m_database.querySong(name);
-            m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
-
-        }
+            if(m_database.insert(id, songName, artistName, filePath, albumName, lyricFileName, abname))
+            {
+                QString name = songName + "-" + artistName;
+                m_showPlayList->addSong(name);
+                QString songdir = m_database.querySong(name);
+                m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+                Song s = m_database.querySongInfo(filePath);
+                m_LocalMusic->addLocalSong(s);
+            }
 
     }
 }
@@ -725,25 +752,125 @@ void MainWindow::playmodeChanged() {
     }
 }
 
-void MainWindow::playChange()
+void MainWindow::playListChange()
 {
     int row = m_showPlayList->m_PlayList->currentIndex().row();
-    QModelIndex index = m_showPlayList->m_PlayListModel->index(row,0);
-    QString name = m_showPlayList->m_PlayListModel->data(index).toString();
-    QString songdir = m_database.querySong(name);
-    QString lyrdir = m_database.queryLyr(name);
-    m_mediaPlayList->clear();
-    if(songdir!="")
+    int col = m_showPlayList->m_PlayList->currentIndex().column();
+    if(col == 0)
     {
-        m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
+        QModelIndex index = m_showPlayList->m_PlayListModel->index(row,0);
+        QString name = m_showPlayList->m_PlayListModel->data(index).toString();
+        QString songdir = m_database.querySong(name);
+        QString lyrdir = m_database.queryLyr(name);
+        if(songdir == "")
+        {
+            qDebug() << "No url existed!";
+            m_mediaPlayList->removeMedia(row);
+        }
+        qDebug() << m_lyricLoader.loadFromFile(lyrdir);
+        auto ly = m_lyricLoader.getAllLine();
+        m_lyricwindow->getLyric(ly);
+        m_mediaPlayList->setCurrentIndex(row);
+        m_mediaPlayer->play();
+        m_downPlayWidget->m_btnPlay->setChecked(true);
+        updateMusicWidget();
+    }
+    else if(col == 1)
+    {
+        QModelIndex index = m_showPlayList->m_PlayListModel->index(row, 0);
+        QString name = m_showPlayList->m_PlayListModel->data(index).toString();
+        QString songdir = m_database.querySong(name);
+        QString url = "file:///" + songdir;
+        QMediaContent tmp = m_mediaPlayer->currentMedia();
+        QString s = tmp.canonicalUrl().toString();
+        if(s == url)
+        {
+            playNextSong();
+            m_mediaPlayer->stop();
+            m_downPlayWidget->m_btnPlay->setChecked(false);
+        }
+        m_mediaPlayList->removeMedia(row);
+        m_showPlayList->m_PlayListModel->removeRow(row);
+        m_showPlayList->name = "";
+    }
+}
+void MainWindow::LeftTableClick()
+{
+    int row = m_leftTable->m_LeftTable->currentIndex().row();
+    if(row == 0)
+    {
+        foreach(SongSheet* ss, m_SongSheetList) ss->hide();
+        if(m_LocalMusic->isVisible()) m_LocalMusic->hide();
+        else m_LocalMusic->Show();
+    }
+    else if(row == 1)
+    {
+        bool ok;
+        QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),tr("请输入歌单名称:"), QLineEdit::Normal,QDir::home().dirName(), &ok);
+        foreach(SongSheet* ss, m_SongSheetList)
+        {
+            if(ss->name == text)
+            {
+                qDebug() << "same song sheet name";
+                return;
+            }
+        }
+        SongSheet* nss = new SongSheet(this);
+        nss->name = text;
+        m_SongSheetList.append(nss);
+        m_leftTable->addSheet(text);
+    }
+    else if(row > 1)
+    {
+        m_LocalMusic->hide();
+        if(m_SongSheetList.at(row - 2)->isVisible()) m_SongSheetList.at(row - 2)->hide();
+        else
+        {
+            foreach(SongSheet* ss, m_SongSheetList)
+            {
+                ss->hide();
+            }
+            SongSheet* ss = m_SongSheetList.at(row - 2);
+            ss->Show();
+        }
+    }
+}
+void MainWindow::LocalListClick()
+{
+    int row = m_LocalMusic->m_SongSheet->currentIndex().row();
+    int col = m_LocalMusic->m_SongSheet->currentIndex().column();
+    if(col == 4)
+    {
+
     }
     else
     {
-        qDebug() << "No url existed!";
+        if(m_showPlayList->name == "Local")
+        {
+            QModelIndex index = m_LocalMusic->m_SongSheetModel->index(row,1);
+            QString name = m_LocalMusic->m_SongSheetModel->data(index).toString();
+            index = m_LocalMusic->m_SongSheetModel->index(row,2);
+            QString artist = m_LocalMusic->m_SongSheetModel->data(index).toString();
+            QString songdir = m_database.querySong(name + "-" + artist);
+            QString lyrdir = m_database.queryLyr(name + "-" + artist);
+            if(songdir == "")
+            {
+                qDebug() << "No url existed!";
+                m_mediaPlayList->removeMedia(row);
+            }
+            qDebug() << m_lyricLoader.loadFromFile(lyrdir);
+            auto ly = m_lyricLoader.getAllLine();
+            m_lyricwindow->getLyric(ly);
+            m_mediaPlayList->setCurrentIndex(row);
+            m_mediaPlayer->play();
+            m_downPlayWidget->m_btnPlay->setChecked(true);
+            updateMusicWidget();
+        }
+        else
+        {
+            m_showPlayList->name = "Local";
+        }
     }
-    qDebug() << m_lyricLoader.loadFromFile(lyrdir);
-
-    //m_mediaPlayer->play();
 }
 
 void MainWindow::closeMainwindow() {

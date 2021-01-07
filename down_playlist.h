@@ -29,8 +29,10 @@ public:
     {
         int row=m_PlayListModel->rowCount();
         m_PlayListModel->setItem(row, 0, new QStandardItem(name));
+        m_PlayListModel->setItem(row, 1, new QStandardItem("   X"));
         return true;
     }
+    QString name = "Local";
 };
 
 #endif // DOWN_PLAYLIST_H

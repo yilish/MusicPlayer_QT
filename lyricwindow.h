@@ -2,36 +2,27 @@
 #define LYRICWINDOW_H
 
 #include <QLabel>
-class LyricWindow: public QLabel
+#include <QFont>
+#include <QPalette>
+#include <QMap>
+#include <QList>
+#include "lyricline.h"
+
+class LyricWindow: public QWidget
 {
-    Q_OBJECT
-    public:
-        explicit LyricWindow(QWidget *parent = 0, Qt::WindowFlags f=0);
-        virtual ~LyricWindow(){}
-
-    public slots:
-        void setText(const QString &);
-
-    protected:
-        void showEvent(QShowEvent *);
-        //void paintEvent(QPaintEvent *);
-        void timerEvent(QTimerEvent *);
-        void hideEvent(QHideEvent *);
-
-    private slots:
-        void metrics();
-        void startScroll();
-
-    signals:
-        void currentTextChanged();
-
-    private:
-        int getHeight();
-        void paintEvent(QPaintEvent *event);
-    private:
-        int offset;
-        int timerID;
-        int textHeight;
+public:
+    LyricWindow(QWidget* parent);
+    void normal(int x);
+    void focus(int x);
+    void update(qint64 position);
+    void getLyric(QList<LyricLine*> l);
+private:
+    QFont normal_font, focus_font;
+    QPalette normal_pal, focus_pal;
+    qint64 cur_time, next_time;
+    QLabel* lines[9];
+    QList<LyricLine*> line;
+    int focus_line = 0, top_line = 0, buttom_line = 8, cur_line = 0;
 };
 
 #endif // LYRICWINDOW_H

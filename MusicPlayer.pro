@@ -27,6 +27,7 @@ SOURCES += \
     left_musicbutton.cpp \
     left_musicshowwidget.cpp \
     left_table.cpp \
+    lyricline.cpp \
     lyricloader.cpp \
     lyricwindow.cpp \
     main.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
     qssparser.cpp \
     searchboxproxystyle.cpp \
     song.cpp \
+    songsheet.cpp \
     top_searchwidget.cpp
 
 HEADERS += \
@@ -49,6 +51,7 @@ HEADERS += \
     left_musicbutton.h \
     left_musicshowwidget.h \
     left_table.h \
+    lyricline.h \
     lyricloader.h \
     lyricwindow.h \
     mainwindow.h \
@@ -58,6 +61,7 @@ HEADERS += \
     qssparser.h \
     searchboxproxystyle.h \
     song.h \
+    songsheet.h \
     top_searchwidget.h
 
 FORMS += \

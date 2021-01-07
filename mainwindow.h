@@ -17,12 +17,14 @@
 #include "database.h"
 #include "middle_musicshow.h"
 #include "lyricloader.h"
-#include "lyricwindow.h"
 #include "left_musicshowwidget.h"
 #include "left_musicbutton.h"
 #include "song.h"
-
-
+#include "lyricwindow.h"
+#include <QList>
+#include "lyricline.h"
+#include "songsheet.h"
+#include <QInputDialog>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -61,8 +63,10 @@ private slots:
     void doProcessError(QNetworkReply::NetworkError code);
     void lyricRead();
     void playmodeChanged();
-    void playChange();
+    void playListChange();
     void closeMainwindow();
+    void LocalListClick();
+    void LeftTableClick();
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
@@ -134,6 +138,9 @@ private:
     int m_unMutedVol;
     int m_playMode;
     LyricLoader m_lyricLoader;
-    LyricWindow* m_lyricWindow;
+    LyricWindow* m_lyricwindow;
+    SongSheet* m_LocalMusic;
+    QList<SongSheet*> m_SongSheetList;
+
 };
 #endif // MAINWINDOW_H
