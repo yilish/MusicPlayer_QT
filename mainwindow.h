@@ -23,7 +23,7 @@
 #include "lyricwindow.h"
 #include <QList>
 #include "lyricline.h"
-
+#include "songsheet.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -65,6 +65,7 @@ private slots:
     void playmodeChanged();
     void playListChange();
     void closeMainwindow();
+    void LocalListClick();
 private:
     void setDownWidget(QWidget* widget);
     void setTopWidget(QWidget* widget);
@@ -137,6 +138,8 @@ private:
     int m_playMode;
     LyricLoader m_lyricLoader;
     LyricWindow* m_lyricwindow;
+    SongSheet* m_LocalMusic;
+    QList<SongSheet*> m_SongSheetList;
 
 };
 #endif // MAINWINDOW_H

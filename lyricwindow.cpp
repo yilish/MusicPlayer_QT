@@ -36,7 +36,7 @@ void LyricWindow::update(qint64 position)
     int pos = 0;
     for(pos = 0; pos < line.size() - 1; pos++)
     {
-        if(line.at(pos + 1)->time > position)
+        if(line.at(pos + 1)->time > position + 500)
         {
             flag = 1;
             break;

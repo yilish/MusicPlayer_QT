@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_database.createConnection();
     m_database.createTable();
     qDebug() << QCoreApplication::applicationDirPath();
+    m_LocalMusic = new SongSheet(this);
 
 
     //UI设计
@@ -130,6 +131,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_playMode = 0;
     //播放进度条初始化
 
+    //SongSheet * s = new SongSheet(this);
+    //s->setGeometry(250,69,1050,661);
+    //s->show();
 
     {
         QSqlDatabase db = QSqlDatabase::database("QSQLITE");
@@ -139,8 +143,11 @@ MainWindow::MainWindow(QWidget *parent)
         {
             m_showPlayList->addSong(query.value(0).toString());
             m_mediaPlayList->addMedia(QUrl::fromLocalFile(query.value(1).toString()));
+            Song s = m_database.querySongInfo(m_database.querySong(query.value(0).toString()));
+            m_LocalMusic->addLocalSong(s);
         }
     }
+    m_LocalMusic->Show();
 
 
     m_downProgressBar = new Down_PlayProgressBar(m_downWidget);
@@ -210,13 +217,13 @@ void MainWindow::updateMusicWidget() {
             {
                 ss+=s[i];
             }
-            qDebug() << ss;
+            //qDebug() << ss;
             Song song = m_database.querySongInfo(ss);
             m_leftMusicShowWidget->setSong(&song);
             m_leftBtnFullScreen->setSong(&song);
             m_leftMusicShowWidget->m_tmrUpdate->start();
             m_leftMusicShowWidget->m_tmrUpdateNew->start();
-            if(m_downProgressBar->pos().x() <= 1000)
+            if(m_downProgressBar->pos().x() <= 2000)
             {
                 m_lyricLoader.loadFromFile(song.getLyricUrl());
                 auto ly = m_lyricLoader.getAllLine();
@@ -255,7 +262,7 @@ void MainWindow::playNextSong() {
     {
         ss+=s[i];
     }
-    qDebug() << ss;
+    //qDebug() << ss;
     Song song = m_database.querySongInfo(ss);
     m_leftMusicShowWidget->setSong(&song);
     m_leftBtnFullScreen->setSong(&song);
@@ -285,7 +292,7 @@ void MainWindow::playPrevSong() {
     {
         ss+=s[i];
     }
-    qDebug() << ss;
+    //qDebug() << ss;
     Song song = m_database.querySongInfo(ss);
     m_leftMusicShowWidget->setSong(&song);
     m_leftBtnFullScreen->setSong(&song);
@@ -584,7 +591,7 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
     id = strId;
     songName = objSong["name"].toString();
     artistName = getArtistName(objSong);
-    qDebug() << strId;
+    //qDebug() << strId;
     auto absPath = QApplication::applicationDirPath();
     auto dir = QApplication::applicationDirPath() + QString("/music/");
     createFolder(dir);
@@ -686,7 +693,8 @@ void MainWindow::downloadSelectedSong(const QModelIndex &index) {
                 m_showPlayList->addSong(name);
                 QString songdir = m_database.querySong(name);
                 m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
-
+                Song s = m_database.querySongInfo(filePath);
+                m_LocalMusic->addLocalSong(s);
             }
 
     }
@@ -755,11 +763,7 @@ void MainWindow::playListChange()
         QString name = m_showPlayList->m_PlayListModel->data(index).toString();
         QString songdir = m_database.querySong(name);
         QString lyrdir = m_database.queryLyr(name);
-        if(songdir!="")
-        {
-            m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
-        }
-        else
+        if(songdir == "")
         {
             qDebug() << "No url existed!";
             m_mediaPlayList->removeMedia(row);
@@ -780,8 +784,6 @@ void MainWindow::playListChange()
         QString url = "file:///" + songdir;
         QMediaContent tmp = m_mediaPlayer->currentMedia();
         QString s = tmp.canonicalUrl().toString();
-        qDebug() << s;
-        qDebug() << url;
         if(s == url)
         {
             playNextSong();
@@ -790,6 +792,20 @@ void MainWindow::playListChange()
         }
         m_mediaPlayList->removeMedia(row);
         m_showPlayList->m_PlayListModel->removeRow(row);
+    }
+}
+
+void MainWindow::LocalListClick()
+{
+    int row = m_LocalMusic->m_SongSheet->currentIndex().row();
+    int col = m_LocalMusic->m_SongSheet->currentIndex().column();
+    if(col == 4)
+    {
+
+    }
+    else
+    {
+
     }
 }
 

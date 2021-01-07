@@ -8,6 +8,8 @@ Down_PlayList::Down_PlayList(QWidget *parent) : QWidget(parent)
     m_PlayListModel = new QStandardItemModel;
     m_PlayListModel->setHorizontalHeaderItem(0, new QStandardItem(QObject::tr("歌曲列表")));
     m_PlayListModel->setHorizontalHeaderItem(1, new QStandardItem(QObject::tr("")));
+    //m_PlayListModel->horizontalHeaderItem(0)->setBackground(QBrush(QColor(255, 0, 0)));
+    //m_PlayListModel->horizontalHeaderItem(1)->setBackground(QBrush(QColor(255, 0, 0)));
     m_PlayListModel->setColumnCount(2);
     //m_PlayListModel->setItem(0, 0, new QStandardItem("1"));
     //m_PlayListModel->setItem(1, 0, new QStandardItem("2"));
@@ -23,4 +25,6 @@ Down_PlayList::Down_PlayList(QWidget *parent) : QWidget(parent)
     m_PlayList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_PlayList->setAlternatingRowColors(true);
     m_PlayList->setStyleSheet("background-color:gray");
+
+    m_PlayList->horizontalHeader()->setDisabled(true);
 }
