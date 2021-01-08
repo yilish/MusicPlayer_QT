@@ -17,6 +17,7 @@
 #include <QFile>
 #include <QIODevice>
 #include "song.h"
+#include <QLabel>
 class SongSheet: public QWidget
 {
     Q_OBJECT
@@ -24,6 +25,8 @@ public:
     SongSheet(QWidget *parent = 0);
     QTableView *m_SongSheet;
     QStandardItemModel *m_SongSheetModel;
+    QLabel* m_cover;
+    QLabel* sname;
     bool addSong(Song s)
     {
         int row=m_SongSheetModel->rowCount();

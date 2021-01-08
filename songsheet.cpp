@@ -1,7 +1,11 @@
 #include "songsheet.h"
-
+#include "database.h"
 SongSheet::SongSheet(QWidget *parent) : QWidget(parent)
 {
+    QPalette pal(this->palette());
+    pal.setColor(QPalette::Background,QColor(60,60,60));
+    setAutoFillBackground(true);
+    setPalette(pal);
     this->hide();
 
     //设置播放列表格式
@@ -47,6 +51,41 @@ SongSheet::SongSheet(QWidget *parent) : QWidget(parent)
 
 void SongSheet::Show()
 {
+    QString curDir = ":/images/txy1.png";
+    if(m_SongSheetModel->rowCount()>=0)
+    {
+        QModelIndex index = m_SongSheetModel->index(0, 2);
+        QString name = m_SongSheetModel->data(index).toString();
+        QString songdir;
+        QSqlDatabase db = QSqlDatabase::database("QSQLITE"); //建立数据库连接
+        QSqlQuery query(db);
+        query.prepare(QString("select imagedir from songlist where songname = '%1'").arg(name));
+        if(!query.exec())
+        {
+            qDebug() << "song album image not found";
+        }
+        else if(query.first())
+        {
+            curDir = query.value(0).toString();
+        }
+    }
+    QSize sz(136, 136);
+    m_cover = new QLabel(this);
+    sname = new QLabel(this);
+    sname->setText(name);
+    QFont ft;
+    QPalette pa;
+    pa.setColor(QPalette::WindowText,Qt::white);
+    sname->setPalette(pa);
+    ft.setPointSize(20);
+    sname->setFont(ft);
+    sname->setGeometry(200, 5, 400, 150);
+    QPixmap curPix(curDir);
+    m_cover->setPixmap(curPix);
+    m_cover->setPixmap(m_cover->pixmap()->scaled(sz, Qt::KeepAspectRatio));
+    m_cover->setGeometry(10, 10, 136, 136);
+
+
     this->setGeometry(250,69,1050,661);
     this->show();
 }

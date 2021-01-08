@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_database.createTable();
     qDebug() << QCoreApplication::applicationDirPath();
     m_LocalMusic = new SongSheet(this);
+    m_LocalMusic->name = "本地音乐";
 
 
     //UI设计
@@ -92,7 +93,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_lblLogo = new QLabel(m_topWidget);
     QPixmap pix(":/images/txy2.png");
-
     m_lblLogo->setPixmap(pix);
     m_lblLogo->setPixmap(m_lblLogo->pixmap()->scaled(QSize(255, 65), Qt::KeepAspectRatio));
     //qDebug() << pix.width() << pix.height();
@@ -1080,9 +1080,10 @@ void MainWindow::LocalListClick()
             auto ly = m_lyricLoader.getAllLine();
             m_lyricwindow->getLyric(ly);
             m_mediaPlayList->setCurrentIndex(row);
-            m_mediaPlayer->play();
+            //m_mediaPlayer->play();
             m_downPlayWidget->m_btnPlay->setChecked(true);
             updateMusicWidget();
+            //m_mediaPlayer->play();
         }
         else
         {
@@ -1116,8 +1117,10 @@ void MainWindow::LocalListClick()
                 m_mediaPlayList->addMedia(QUrl::fromLocalFile(songdir));
             }
             m_mediaPlayList->setCurrentIndex(row);
-            m_mediaPlayer->play();
+            //m_mediaPlayer->play();
+            m_downPlayWidget->m_btnPlay->setChecked(true);
             updateMusicWidget();
+            //m_mediaPlayer->play();
         }
     }
 }
@@ -1167,6 +1170,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     if(qobject_cast<QLabel*>(obj) == m_lblLogo &&event->type() == QEvent::MouseButtonRelease)
     {
         qDebug() << "logo is pressed !";
+        backToHome();
 
         return true;
     }
@@ -1323,4 +1327,22 @@ void MainWindow::addToSongSheetClicked()
         connect(butto, SIGNAL(clicked()), this, SLOT(removeBtnClicked()));
         m_SongSheetList.append(nss);
     }
+}
+
+
+void MainWindow::backToHome()
+{
+    m_LocalMusic->hide();
+    foreach(SongSheet* s, m_SongSheetList)
+    {
+        s->hide();
+    }
+    m_showPlayList->hide();
+    m_middleWheelPic->hide();
+    m_leftMusicShowWidget->hide();
+    m_searchResult->hide();
+    QPixmap pix;
+    pix.load(":/images/TJnight.png");
+    m_middleMusicShow->m_lblImage->setPixmap(pix.scaled(1050, 661, Qt::KeepAspectRatioByExpanding));
+    m_middleMusicShow->m_lblImage->setGeometry(0,0,1050,661);
 }
