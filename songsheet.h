@@ -33,7 +33,7 @@ public:
         m_SongSheetModel->setItem(row, 2, new QStandardItem(s.getName()));
         m_SongSheetModel->setItem(row, 3, new QStandardItem(s.getArtist()));
         m_SongSheetModel->setItem(row, 4, new QStandardItem(s.getAlbumName()));
-        m_SongSheetModel->setItem(row, 5, new QStandardItem("X"));
+        m_SongSheetModel->setItem(row, 5, new QStandardItem(""));
         for (int i = 0; i < 6; i++) {
             m_SongSheetModel->item(row, i)->setBackground(QColor(43,43,43));
             m_SongSheetModel->item(row, i)->setForeground(QColor(213,207,177));

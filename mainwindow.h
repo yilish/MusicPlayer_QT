@@ -75,6 +75,7 @@ private slots:
     void creatSongSheetClicked();
     void mySongSheetClicked();
     void likeBtnClicked();
+    void addToSongSheetClicked();
 private:
     //void keyPressEvent(QKeyEvent *event);
     void setDownWidget(QWidget* widget);

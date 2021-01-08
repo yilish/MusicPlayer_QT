@@ -65,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent)
         m_leftTable->m_LeftTableModel->setItem(2, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(2, 0), button);
         connect(button, SIGNAL(clicked()), this, SLOT(mySongSheetClicked()));
+        m_SongSheetList.append(nss);
+        connect(nss->m_SongSheet, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LocalListClick()));
     }
 
     m_leftBtnFullScreen = new Left_MusicButton(m_leftWidget);
@@ -194,6 +196,16 @@ MainWindow::MainWindow(QWidget *parent)
             int ro=m_LocalMusic->m_SongSheetModel->rowCount() - 1;
             m_LocalMusic->m_SongSheet->setIndexWidget(m_LocalMusic->m_SongSheetModel->index(ro, 1), but);
             connect(but, SIGNAL(clicked()), this, SLOT(likeBtnClicked()));
+
+            QPushButton *butto = new QPushButton();
+            butto->setCursor(Qt::PointingHandCursor);
+            butto->setToolTip(QString("添加这首歌到歌单"));
+
+            butto->setStyleSheet("QPushButton{background:rgb(43,43,43);border:0px;}\
+                                           QPushButton{image:url(:/images/images/add.png)}\
+                                           QPushButton:hover{image:url(:/images/images/add.png);}");
+            connect(butto, SIGNAL(clicked()), this, SLOT(addToSongSheetClicked()));
+            m_LocalMusic->m_SongSheet->setIndexWidget(m_LocalMusic->m_SongSheetModel->index(ro, 5), butto);
         }
     }
 
@@ -233,7 +245,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_downBtnPlayList->m_btnPlayList, SIGNAL(clicked(bool)), this, SLOT(showPlayList()));
     connect(m_showPlayList->m_PlayList, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(playListChange()));
     connect(m_LocalMusic->m_SongSheet, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LocalListClick()));
-    connect(m_leftTable->m_LeftTable, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LeftTableClick()));
+    //connect(m_leftTable->m_LeftTable, SIGNAL(clicked(const QModelIndex &)), this, SLOT(LeftTableClick()));
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
 
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
@@ -928,23 +940,41 @@ void MainWindow::playListChange()
 }
 void MainWindow::removeBtnClicked()
 {
-    int row = m_showPlayList->m_PlayList->currentIndex().row();
-    int col = m_showPlayList->m_PlayList->currentIndex().column();
-    QModelIndex index = m_showPlayList->m_PlayListModel->index(row, 0);
-    QString name = m_showPlayList->m_PlayListModel->data(index).toString();
-    QString songdir = m_database.querySong(name);
-    QString url = "file:///" + songdir;
-    QMediaContent tmp = m_mediaPlayer->currentMedia();
-    QString s = tmp.canonicalUrl().toString();
-    if(s == url)
+    if(m_showPlayList->isVisible())
     {
-        playNextSong();
-        m_mediaPlayer->stop();
-        m_downPlayWidget->m_btnPlay->setChecked(false);
+        int row = m_showPlayList->m_PlayList->currentIndex().row();
+        int col = m_showPlayList->m_PlayList->currentIndex().column();
+        QModelIndex index = m_showPlayList->m_PlayListModel->index(row, 0);
+        QString name = m_showPlayList->m_PlayListModel->data(index).toString();
+        QString songdir = m_database.querySong(name);
+        QString url = "file:///" + songdir;
+        QMediaContent tmp = m_mediaPlayer->currentMedia();
+        QString s = tmp.canonicalUrl().toString();
+        if(s == url)
+        {
+            playNextSong();
+            m_mediaPlayer->stop();
+            m_downPlayWidget->m_btnPlay->setChecked(false);
+        }
+        m_mediaPlayList->removeMedia(row);
+        m_showPlayList->m_PlayListModel->removeRow(row);
+        m_showPlayList->name = "";
     }
-    m_mediaPlayList->removeMedia(row);
-    m_showPlayList->m_PlayListModel->removeRow(row);
-    m_showPlayList->name = "";
+    else
+    {
+        SongSheet* ss;
+        foreach(SongSheet* s, m_SongSheetList)
+        {
+            if(s->isVisible())
+            {
+                ss = s;
+                break;
+            }
+        }
+        int row = ss->m_SongSheet->currentIndex().row();
+        ss->m_SongSheetModel->removeRow(row);
+        if(m_showPlayList->name == ss->name) m_showPlayList->name = "";
+    }
 }
 
 
@@ -958,14 +988,19 @@ void MainWindow::mySongSheetClicked()
 {
     int row = m_leftTable->m_LeftTable->currentIndex().row();
     m_LocalMusic->hide();
-    if(m_SongSheetList.at(row - 2)->isVisible()) m_SongSheetList.at(row - 2)->hide();
+    qDebug() << row;
+    if(m_SongSheetList.at(row - 1)->isVisible())
+    {
+        m_SongSheetList.at(row - 1)->hide();
+    }
     else
     {
         foreach(SongSheet* ss, m_SongSheetList)
         {
-            ss->hide();
+            if(ss->isVisible())
+                ss->hide();
         }
-        SongSheet* ss = m_SongSheetList.at(row - 2);
+        SongSheet* ss = m_SongSheetList.at(row - 1);
         ss->Show();
     }
 }
@@ -985,13 +1020,14 @@ void MainWindow::creatSongSheetClicked()
         }
         SongSheet* nss = new SongSheet(this);
         nss->name = text;
-        m_SongSheetList.append(nss);
         QPushButton *button = new QPushButton(text);
-        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);}");
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);border:none;}");
         int row = m_leftTable->m_LeftTableModel->rowCount();
         m_leftTable->m_LeftTableModel->setItem(row, 0, new QStandardItem(QObject::tr("")));
         m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(row, 0), button);
+        m_SongSheetList.append(nss);
         connect(button, SIGNAL(clicked()), this, SLOT(mySongSheetClicked()));
+        connect(nss->m_SongSheet, SIGNAL(clicked(const QModelIndex &)), this, SLOT(LocalListClick()));
     }
 }
 void MainWindow::LeftTableClick()
@@ -1002,23 +1038,6 @@ void MainWindow::LeftTableClick()
         foreach(SongSheet* ss, m_SongSheetList) ss->hide();
         if(m_LocalMusic->isVisible()) m_LocalMusic->hide();
         else m_LocalMusic->Show();
-    }
-    else if(row == 1)
-    {
-        bool ok;
-        QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),tr("请输入歌单名称:"), QLineEdit::Normal,QDir::home().dirName(), &ok);
-        foreach(SongSheet* ss, m_SongSheetList)
-        {
-            if(ss->name == text)
-            {
-                qDebug() << "same song sheet name";
-                return;
-            }
-        }
-        SongSheet* nss = new SongSheet(this);
-        nss->name = text;
-        m_SongSheetList.append(nss);
-        m_leftTable->addSheet(text);
     }
     else if(row > 1)
     {
@@ -1037,23 +1056,19 @@ void MainWindow::LeftTableClick()
 }
 
 
-
 void MainWindow::LocalListClick()
 {
-    int row = m_LocalMusic->m_SongSheet->currentIndex().row();
-    int col = m_LocalMusic->m_SongSheet->currentIndex().column();
-    if(col == 4)
+    SongSheet* ss;
+    if(m_LocalMusic->isVisible()) ss = m_LocalMusic;
+    else foreach(SongSheet* s, m_SongSheetList) if(s->isVisible()) {ss = s; break;}
+    int row = ss->m_SongSheet->currentIndex().row();
     {
-
-    }
-    else
-    {
-        if(m_showPlayList->name == "Local")
+        if(m_showPlayList->name == ss->name)
         {
-            QModelIndex index = m_LocalMusic->m_SongSheetModel->index(row,2);
-            QString name = m_LocalMusic->m_SongSheetModel->data(index).toString();
-            index = m_LocalMusic->m_SongSheetModel->index(row,3);
-            QString artist = m_LocalMusic->m_SongSheetModel->data(index).toString();
+            QModelIndex index = ss->m_SongSheetModel->index(row,2);
+            QString name = ss->m_SongSheetModel->data(index).toString();
+            index = ss->m_SongSheetModel->index(row,3);
+            QString artist = ss->m_SongSheetModel->data(index).toString();
             QString songdir = m_database.querySong(name + "-" + artist);
             QString lyrdir = m_database.queryLyr(name + "-" + artist);
             if(songdir == "")
@@ -1071,8 +1086,8 @@ void MainWindow::LocalListClick()
         }
         else
         {
-            m_showPlayList->name = "Local";
-            int roww = m_LocalMusic->m_SongSheetModel->rowCount();
+            m_showPlayList->name = ss->name;
+            int roww = ss->m_SongSheetModel->rowCount();
             int ro = m_showPlayList->m_PlayListModel->rowCount();
             m_showPlayList->m_PlayListModel->removeRows(0, ro);
 
@@ -1080,10 +1095,10 @@ void MainWindow::LocalListClick()
             m_mediaPlayList->clear();
             for(int i = 0; i < roww; i++)
             {
-                QModelIndex index = m_LocalMusic->m_SongSheetModel->index(i,2);
-                QString name = m_LocalMusic->m_SongSheetModel->data(index).toString();
-                index = m_LocalMusic->m_SongSheetModel->index(i,3);
-                QString artist = m_LocalMusic->m_SongSheetModel->data(index).toString();
+                QModelIndex index = ss->m_SongSheetModel->index(i,2);
+                QString name = ss->m_SongSheetModel->data(index).toString();
+                index = ss->m_SongSheetModel->index(i,3);
+                QString artist = ss->m_SongSheetModel->data(index).toString();
                 QString songdir = m_database.querySong(name + "-" + artist);
                 m_showPlayList->addSong(name + "-" + artist);
                 QPushButton *button = new QPushButton();
@@ -1162,7 +1177,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
 void MainWindow::likeBtnClicked()
 {
-    qDebug() << 1;
     SongSheet* ss;
     if(m_LocalMusic->isVisible()) ss = m_LocalMusic;
     else
@@ -1176,7 +1190,6 @@ void MainWindow::likeBtnClicked()
             }
         }
     }
-    qDebug() << ss;
     int row = ss->m_SongSheet->currentIndex().row();
     QModelIndex index = ss->m_SongSheetModel->index(row,2);
     QString name = ss->m_SongSheetModel->data(index).toString();
@@ -1225,5 +1238,89 @@ void MainWindow::likeBtnClicked()
                 return;
             }
         }
+    }
+}
+
+
+
+void MainWindow::addToSongSheetClicked()
+{
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),tr("请输入要添加到的歌单名称:"), QLineEdit::Normal, "",&ok);
+    int row = m_LocalMusic->m_SongSheet->currentIndex().row();
+    QModelIndex index = m_LocalMusic->m_SongSheetModel->index(row,2);
+    QString name = m_LocalMusic->m_SongSheetModel->data(index).toString();
+    index = m_LocalMusic->m_SongSheetModel->index(row, 3);
+    QString artist = m_LocalMusic->m_SongSheetModel->data(index).toString();
+    QString na = name + "-" + artist;
+    QString url = m_database.querySong(na);
+    Song song = m_database.querySongInfo(url);
+
+    if(ok)
+    {
+        foreach(SongSheet* ss, m_SongSheetList)
+        {
+            if(ss->name == text)
+            {
+                ss->addSong(song);
+                QPushButton *but = new QPushButton();
+                but->setCursor(Qt::PointingHandCursor);
+                but->setToolTip(QString("喜欢"));
+
+                but->setStyleSheet("QPushButton{background:rgb(43,43,43);border:0px;}\
+                                                                      QPushButton{image:url(:/images/love-grey.png)}\
+                                                                      QPushButton:checked{image:url(:/images/love.png);}");
+                but->setGeometry(0, 0, 25, 25);
+                int ro=ss->m_SongSheetModel->rowCount();
+                ss->m_SongSheet->setIndexWidget(ss->m_SongSheetModel->index(ro - 1, 1), but);
+                connect(but, SIGNAL(clicked()), this, SLOT(likeBtnClicked()));
+
+                QPushButton *button = new QPushButton();
+                button->setCursor(Qt::PointingHandCursor);
+                button->setToolTip(QString("删除这首歌"));
+
+                button->setStyleSheet("QPushButton{background:rgb(43,43,43);border:0px;}\
+                                               QPushButton{image:url(:/images/images/close_normal.png)}\
+                                               QPushButton:hover{image:url(:/images/images/close_pressed.png);}");
+                ss->m_SongSheet->setIndexWidget(ss->m_SongSheetModel->index(ro - 1, 5), button);
+                connect(button, SIGNAL(clicked()), this, SLOT(removeBtnClicked()));
+                return;
+            }
+        }
+
+        SongSheet* nss = new SongSheet(this);
+        nss->name = text;
+        QPushButton *button = new QPushButton(text);
+        button->setStyleSheet("QPushButton{font-family:'Microsoft YaHei'; color:rgb(214, 214, 214);border:none;}");
+        int row = m_leftTable->m_LeftTableModel->rowCount();
+        m_leftTable->m_LeftTableModel->setItem(row, 0, new QStandardItem(QObject::tr("")));
+        m_leftTable->m_LeftTable->setIndexWidget(m_leftTable->m_LeftTableModel->index(row, 0), button);
+        connect(button, SIGNAL(clicked()), this, SLOT(mySongSheetClicked()));
+        connect(nss->m_SongSheet, SIGNAL(clicked(const QModelIndex &)), this, SLOT(LocalListClick()));
+
+
+        nss->addSong(song);
+        QPushButton *but = new QPushButton();
+        but->setCursor(Qt::PointingHandCursor);
+        but->setToolTip(QString("喜欢"));
+
+        but->setStyleSheet("QPushButton{background:rgb(43,43,43);border:0px;}\
+                                                              QPushButton{image:url(:/images/love-grey.png)}\
+                                                              QPushButton:checked{image:url(:/images/love.png);}");
+        but->setGeometry(0, 0, 25, 25);
+        int ro=nss->m_SongSheetModel->rowCount();
+        nss->m_SongSheet->setIndexWidget(nss->m_SongSheetModel->index(ro - 1, 1), but);
+        connect(but, SIGNAL(clicked()), this, SLOT(likeBtnClicked()));
+
+        QPushButton *butto = new QPushButton();
+        butto->setCursor(Qt::PointingHandCursor);
+        butto->setToolTip(QString("删除这首歌"));
+
+        butto->setStyleSheet("QPushButton{background:rgb(43,43,43);border:0px;}\
+                                       QPushButton{image:url(:/images/images/close_normal.png)}\
+                                       QPushButton:hover{image:url(:/images/images/close_pressed.png);}");
+        nss->m_SongSheet->setIndexWidget(nss->m_SongSheetModel->index(ro - 1, 5), butto);
+        connect(butto, SIGNAL(clicked()), this, SLOT(removeBtnClicked()));
+        m_SongSheetList.append(nss);
     }
 }
