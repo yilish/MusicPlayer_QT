@@ -247,7 +247,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_LocalMusic->m_SongSheet, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(LocalListClick()));
     //connect(m_leftTable->m_LeftTable, SIGNAL(clicked(const QModelIndex &)), this, SLOT(LeftTableClick()));
     connect(m_topSearchWidget->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchSong()));
-
     connect(m_topSearchWidget->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchSong()));
 
     m_middleWheelPic->m_lblPrev->installEventFilter(this);
@@ -612,7 +611,7 @@ void MainWindow::showPlayList() {
 
 void MainWindow::searchSong() {
     auto strToSearch = m_topSearchWidget->m_lineSearch->text();
-    //qDebug() << "Hello" + strToSearch.toLatin1();
+    qDebug() << "Hello" + strToSearch.toLatin1();
     m_searchResult->show();
     QUrl netEaseUrl = QUrl("http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s=" +strToSearch + "&type=1&offset=0&total=true&limit=10");
     QUrl url = QUrl("https://api.paugram.com/netease/?title=" + strToSearch);

@@ -2,10 +2,36 @@
 #include "database.h"
 SongSheet::SongSheet(QWidget *parent) : QWidget(parent)
 {
-    QPalette pal(this->palette());
-    pal.setColor(QPalette::Background,QColor(60,60,60));
+    search = new Top_SearchWidget(this);
+    search->setGeometry(600, 100, 400, 30);
+    QPalette pal;
+    pal.setColor(QPalette::Text, QColor(100, 100, 100));
+
+    search->m_lineSearch = new QLineEdit(search);
+    search->m_lineSearch->setGeometry(15, 0, 300, 30);
+    QFile* file = new QFile(":/qss/lineSearchStyle.qss");
+    QSSParser qss(file);
+    auto str = qss.getStyleSheet();
+    search->m_lineSearch->setStyleSheet(str);
+    search->m_lineSearch->setPlaceholderText(QString("搜索音乐,歌手,歌词,用户"));
+
+    search->m_lineSearch->setPalette(pal);
+    search->m_btnSearch = new QPushButton(search);
+    search->m_btnSearch->setGeometry(315,0,30,30);
+    search->m_btnSearch->setToolTip(QString("搜索"));
+    search->m_btnSearch->setStyleSheet("QPushButton{background:rgb(0,20,20);border:0px;}\
+                                QPushButton{image:url(:/images/images/search_normal.png)}\
+                                QPushButton:hover{image:url(:/images/images/search_press.png)}\
+                                QPushButton:pressed{image:url(:/images/images/search_normal.png)}");
+    search->m_btnSearch->setCursor(Qt::PointingHandCursor);
+
+    connect(search->m_btnSearch, SIGNAL(clicked()), this, SLOT(searchIn()));
+    connect(search->m_lineSearch, SIGNAL(returnPressed()), this, SLOT(searchIn()));
+
+    QPalette pa(this->palette());
+    pa.setColor(QPalette::Background,QColor(60,60,60));
     setAutoFillBackground(true);
-    setPalette(pal);
+    setPalette(pa);
     this->hide();
 
     //设置播放列表格式

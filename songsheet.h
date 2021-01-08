@@ -18,6 +18,7 @@
 #include <QIODevice>
 #include "song.h"
 #include <QLabel>
+#include "top_searchwidget.h"
 class SongSheet: public QWidget
 {
     Q_OBJECT
@@ -27,6 +28,7 @@ public:
     QStandardItemModel *m_SongSheetModel;
     QLabel* m_cover;
     QLabel* sname;
+    Top_SearchWidget* search;
     bool addSong(Song s)
     {
         int row=m_SongSheetModel->rowCount();
@@ -69,11 +71,39 @@ public:
     }
     void Show();
     QString name;
+
     void SortByColumnSlot(int column)
     {
         static bool bStata = true;
         m_SongSheet->sortByColumn(column, bStata ? Qt::AscendingOrder : Qt::DescendingOrder);
         bStata = !bStata;
+    }
+private slots :
+    void searchIn()
+    {
+
+        QString text = search->m_lineSearch->text();
+        //qDebug() << text;
+        int row = m_SongSheetModel->rowCount();
+        for(int i = 0; i < row; i++)
+        {
+            QModelIndex index = m_SongSheetModel->index(i, 2);
+            QString songname = m_SongSheetModel->data(index).toString();
+            //qDebug() << songname;
+            int j = 0, pos = 0;
+            for(j = 0; j < songname.length(); j++)
+            {
+                if(songname[j] == text[pos]) pos++;
+                if(pos == text.length())
+                {
+                    m_SongSheet->clearSelection();
+                    m_SongSheet->selectRow(i);
+                    return;
+                }
+
+            }
+
+        }
     }
 };
 
