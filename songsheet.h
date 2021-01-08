@@ -66,6 +66,12 @@ public:
     }
     void Show();
     QString name;
+    void SortByColumnSlot(int column)
+    {
+        static bool bStata = true;
+        m_SongSheet->sortByColumn(column, bStata ? Qt::AscendingOrder : Qt::DescendingOrder);
+        bStata = !bStata;
+    }
 };
 
 #endif // SONGSHEET_H

@@ -21,10 +21,12 @@ SongSheet::SongSheet(QWidget *parent) : QWidget(parent)
     m_SongSheet = new QTableView(this);
     m_SongSheet->setGeometry(0, 161, 1050, 500);
     m_SongSheet->setModel(m_SongSheetModel);
-    m_SongSheet->verticalHeader()->hide();
-    m_SongSheet->setColumnWidth(0, 50);
+    //m_SongSheet->verticalHeader()->hide();
+    m_SongSheet->verticalHeader()->setStyleSheet("QHeaderView::section {border: none;border-right: none;border-bottom: none;"
+                                                 "color: rgb(214, 214, 214);background-color: rgb(51, 51, 51)}");
+    m_SongSheet->setColumnWidth(0, 0);
     m_SongSheet->setColumnWidth(1, 50);
-    m_SongSheet->setColumnWidth(2, 400);
+    m_SongSheet->setColumnWidth(2, 430);
     m_SongSheet->setColumnWidth(3, 240);
     m_SongSheet->setColumnWidth(4, 240);
     m_SongSheet->setColumnWidth(5, 50);
@@ -34,11 +36,12 @@ SongSheet::SongSheet(QWidget *parent) : QWidget(parent)
     //m_SongSheet->setStyleSheet("background-color:rgb(43,43,43)");
     m_SongSheet->horizontalHeader()->setStyleSheet("QHeaderView::section {border: none;border-right: none;border-bottom: none;"
                                                                        "color: rgb(214, 214, 214);background-color: rgb(51, 51, 51)}");
-    m_SongSheet->horizontalHeader()->setDisabled(true);
+    //m_SongSheet->horizontalHeader()->setDisabled(true);
     m_SongSheet->setStyleSheet("background-color:rgb(43,43,43); selection-background-color:rgb(51,51,51); QTableView::item:hover {background: rgb(51, 51, 51);}");
     m_SongSheet->setFocusPolicy(Qt::NoFocus);
     m_SongSheet->setFrameShape(QFrame::NoFrame);
     m_SongSheet->setShowGrid(false);
+    m_SongSheet->setSortingEnabled(true);
 
 }
 

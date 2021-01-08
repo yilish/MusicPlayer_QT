@@ -31,6 +31,6 @@ Down_PlayList::Down_PlayList(QWidget *parent) : QWidget(parent)
     m_PlayList->horizontalHeader()->setStyleSheet("QHeaderView::section {border: none;border-right: none;border-bottom: none;"
                                                     "color: rgb(214, 214, 214);background-color: rgb(51, 51, 51)}");
     //setAutoFillBackground(true);
-    m_PlayList->horizontalHeader()->setDisabled(true);
+    //m_PlayList->horizontalHeader()->setDisabled(true);
     //setStyle(new SearchBoxProxyStyle);
 }
